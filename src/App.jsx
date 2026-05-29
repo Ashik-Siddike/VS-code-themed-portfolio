@@ -90,7 +90,7 @@ function App() {
     setActivePage(pageId);
     setPageKey(k => k + 1);
     setOpenTabs(prev => prev.includes(pageId) ? prev : [...prev, pageId]);
-    if (window.innerWidth < 768) {
+    if (window.innerWidth < 1024) {
       setSidebarOpen(false);
     }
   }, []);
@@ -188,6 +188,48 @@ function App() {
       {/* Menu Bar */}
       <MenuBar activePage={activePage} navigate={navigate} openPalette={() => setShowPalette(true)} />
 
+      {/* Mobile Top Header (compact-topbar) */}
+      <div className="compact-topbar">
+        {/* Left Side: Hamburger & Current File Path */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button
+            onClick={() => setSidebarOpen(prev => !prev)}
+            className="compact-topbar-hamburger"
+            title="Toggle Sidebar"
+          >
+            ☰
+          </button>
+          <div style={{ fontSize: '13px', color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ color: 'var(--dim)' }}>~/</span>
+            <span style={{ fontWeight: 500, color: 'var(--bright)' }}>{activePage}</span>
+          </div>
+        </div>
+
+        {/* Right Side: Copilot Sparkle & Command Palette Search */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* Copilot Sparkle Button */}
+          <button
+            onClick={openCopilotChat}
+            className="compact-topbar-btn"
+            title="Open Copilot"
+          >
+            <span style={{ color: 'var(--purple)', fontSize: '13px', display: 'inline-flex' }}>
+              ✦
+            </span>
+            <span className="copilot-pulse-dot" />
+          </button>
+
+          {/* Search/Palette Button */}
+          <button
+            onClick={() => setShowPalette(true)}
+            className="compact-topbar-btn"
+            title="Search Files"
+          >
+            <span style={{ fontSize: '12px' }}>🔍</span>
+          </button>
+        </div>
+      </div>
+
       {/* Activity Bar */}
       <ActivityBar
         active={sidebarOpen ? activityActive : null}
@@ -209,7 +251,7 @@ function App() {
 
       {/* Editor Area */}
       <div className="editor-area" onClick={() => {
-        if (window.innerWidth < 768 && sidebarOpen) {
+        if (window.innerWidth < 1024 && sidebarOpen) {
           setSidebarOpen(false);
         }
       }}>
