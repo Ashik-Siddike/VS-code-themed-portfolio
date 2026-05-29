@@ -9,6 +9,7 @@ const Terminal = ({ activePage, setActivePage, onClose, showToast, activeTab, se
   const [inputVal, setInputVal] = useState('');
   const [commandHistory, setCommandHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
+  const [shellMode, setShellMode] = useState({ step: 'command' });
   const terminalEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -86,6 +87,50 @@ const Terminal = ({ activePage, setActivePage, onClose, showToast, activeTab, se
     }
   };
 
+  const fetchGuestbook = async () => {
+    setHistory(prev => [...prev, { type: 'info', text: 'Fetching guestbook logs...' }]);
+    try {
+      const res = await fetch('/api/guestbook');
+      const data = await res.json();
+      if (data.success && data.entries.length > 0) {
+        data.entries.forEach(entry => {
+          const dateStr = new Date(entry.createdAt).toLocaleDateString('en-US', {
+            month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+          });
+          setHistory(prev => [...prev, {
+            type: 'output',
+            text: `[${dateStr}]  ${entry.name}: "${entry.message}"`
+          }]);
+        });
+      } else {
+        setHistory(prev => [...prev, { type: 'output', text: 'Guestbook is currently empty. Be the first to sign using "guestbook write"!' }]);
+      }
+    } catch (err) {
+      setHistory(prev => [...prev, { type: 'error', text: 'Failed to retrieve guestbook logs. Database connection error.' }]);
+    }
+  };
+
+  const submitGuestbookEntry = async (name, message) => {
+    setHistory(prev => [...prev, { type: 'info', text: 'Submitting message to guestbook database...' }]);
+    try {
+      const res = await fetch('/api/guestbook', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, message })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setHistory(prev => [...prev, { type: 'output', text: '✨ Success! Thank you for signing Ashik\'s guestbook.' }]);
+      } else {
+        setHistory(prev => [...prev, { type: 'error', text: `Error: ${data.message || 'Failed to submit.'}` }]);
+      }
+    } catch (err) {
+      setHistory(prev => [...prev, { type: 'error', text: 'Error connecting to database. Fallback saved in local session.' }]);
+    } finally {
+      setShellMode({ step: 'command' });
+    }
+  };
+
   const handleCommand = (cmdStr) => {
     const trimmed = cmdStr.trim();
     if (!trimmed) return;
@@ -110,7 +155,7 @@ const Terminal = ({ activePage, setActivePage, onClose, showToast, activeTab, se
         setHistory([]);
         return;
       case 'help':
-        output = 'Available commands: ls, cat <file>, open <file>, whoami, echo <text>, date, git log, python --version, clear';
+        output = 'Available commands: ls, cat <file>, open <file>, whoami, echo <text>, date, git log, guestbook read, guestbook write, python --version, clear';
         break;
       case 'ls':
       case 'dir':
@@ -131,6 +176,16 @@ const Terminal = ({ activePage, setActivePage, onClose, showToast, activeTab, se
         break;
       case 'echo':
         output = arg || '';
+        break;
+      case 'guestbook':
+        if (arg === 'read') {
+          fetchGuestbook();
+        } else if (arg === 'write') {
+          setHistory(prev => [...prev, { type: 'output', text: 'Starting interactive guestbook wizard...' }]);
+          setShellMode({ step: 'get_name' });
+        } else {
+          output = 'Usage: guestbook read  |  guestbook write';
+        }
         break;
       case 'git':
         if (arg === 'log') {
@@ -186,16 +241,38 @@ Date:   Wed May 27 22:15:33 2026
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      handleCommand(inputVal);
-      setInputVal('');
-    } else if (e.key === 'ArrowUp') {
+      if (shellMode.step === 'get_name') {
+        const nameVal = inputVal.trim();
+        if (!nameVal) {
+          setHistory(prev => [...prev, { type: 'error', text: 'Name cannot be empty. Please enter your name.' }]);
+          setInputVal('');
+          return;
+        }
+        setHistory(prev => [...prev, { type: 'prompt', text: `Name: ${nameVal}` }]);
+        setShellMode({ step: 'get_message', name: nameVal });
+        setInputVal('');
+      } else if (shellMode.step === 'get_message') {
+        const msgVal = inputVal.trim();
+        if (!msgVal) {
+          setHistory(prev => [...prev, { type: 'error', text: 'Message cannot be empty. Please enter your message.' }]);
+          setInputVal('');
+          return;
+        }
+        setHistory(prev => [...prev, { type: 'prompt', text: `Message: ${msgVal}` }]);
+        submitGuestbookEntry(shellMode.name, msgVal);
+        setInputVal('');
+      } else {
+        handleCommand(inputVal);
+        setInputVal('');
+      }
+    } else if (e.key === 'ArrowUp' && shellMode.step === 'command') {
       e.preventDefault();
       if (commandHistory.length > 0) {
         const nextIdx = Math.min(historyIndex + 1, commandHistory.length - 1);
         setHistoryIndex(nextIdx);
         setInputVal(commandHistory[nextIdx]);
       }
-    } else if (e.key === 'ArrowDown') {
+    } else if (e.key === 'ArrowDown' && shellMode.step === 'command') {
       e.preventDefault();
       const nextIdx = historyIndex - 1;
       setHistoryIndex(nextIdx);
@@ -251,7 +328,11 @@ Date:   Wed May 27 22:15:33 2026
               </div>
             ))}
             <div className="terminal-input-line">
-              <span className="terminal-prompt">ashik @portfolio : ~ $</span>
+              <span className="terminal-prompt" style={{ color: shellMode.step !== 'command' ? 'var(--yellow)' : 'inherit' }}>
+                {shellMode.step === 'get_name' ? 'Enter your name: ' :
+                 shellMode.step === 'get_message' ? 'Enter your message: ' :
+                 'ashik @portfolio : ~ $'}
+              </span>
               <input
                 ref={inputRef}
                 type="text"
