@@ -22,25 +22,33 @@ import WorkHistoryPage from './pages/WorkHistoryPage';
 
 import AdminPage     from './pages/AdminPage';
 import BrowserPage   from './pages/BrowserPage';
+import BlogPage      from './pages/BlogPage';
+import GithubActivityPage from './pages/GithubActivityPage';
 
 import { PAGES } from './constants';
 
 const BREADCRUMBS = {
-  home:       ['portfolio', 'src', 'home.tsx'],
-  about:      ['portfolio', 'src', 'about.html'],
-  projects:   ['portfolio', 'src', 'projects.js'],
-  skills:     ['portfolio', 'data', 'skills.json'],
-  experience: ['portfolio', 'src', 'experience.ts'],
-  contact:    ['portfolio', 'src', 'contact.css'],
-  readme:     ['portfolio', 'src', 'README.md'],
-  admin:      ['portfolio', 'src', 'admin.jsx'],
-  browser:    ['portfolio', 'src', 'browser.tsx'],
+  home:            ['portfolio', 'src', 'home.tsx'],
+  about:           ['portfolio', 'src', 'about.html'],
+  projects:        ['portfolio', 'src', 'projects.js'],
+  skills:          ['portfolio', 'data', 'skills.json'],
+  experience:      ['portfolio', 'src', 'experience.ts'],
+  contact:         ['portfolio', 'src', 'contact.css'],
+  readme:          ['portfolio', 'src', 'README.md'],
+  blog_automation: ['portfolio', 'src', 'blog', 'automation_guide.md'],
+  blog_mern:       ['portfolio', 'src', 'blog', 'mern_tips.md'],
+  github_activity: ['portfolio', 'src', 'github_activity.md'],
+  admin:           ['portfolio', 'src', 'admin.jsx'],
+  browser:         ['portfolio', 'src', 'browser.tsx'],
 };
 const PAGE_COMPONENTS = {
   home: HomePage, about: AboutPage, projects: ProjectsPage,
   skills: ExperiencePage, experience: WorkHistoryPage,
   contact: ContactPage, readme: ReadmePage, admin: AdminPage,
   browser: BrowserPage,
+  blog_automation: BlogPage,
+  blog_mern: BlogPage,
+  github_activity: GithubActivityPage,
 };
 
 function App() {
@@ -321,6 +329,7 @@ function App() {
                 setActivePage={navigate}
                 browserUrl={browserUrl}
                 browserTitle={browserTitle}
+                theme={theme}
                 openInSimpleBrowser={(url, title) => {
                   setBrowserUrl(url);
                   setBrowserTitle(title);

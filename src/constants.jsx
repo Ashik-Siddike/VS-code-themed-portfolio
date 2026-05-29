@@ -49,6 +49,9 @@ export const PAGES = [
   { id: 'experience', label: 'experience.ts',    icon: <TsIcon />, color: '#3178c6' },
   { id: 'contact',    label: 'contact.css',       icon: <CssIcon />, color: '#264de4' },
   { id: 'readme',     label: 'README.md',         icon: <MarkdownIcon />, color: '#519aba' },
+  { id: 'blog_automation', label: 'automation_guide.md', icon: <MarkdownIcon />, color: '#519aba', folder: 'blog' },
+  { id: 'blog_mern',       label: 'mern_tips.md',       icon: <MarkdownIcon />, color: '#519aba', folder: 'blog' },
+  { id: 'github_activity', label: 'github_activity.md', icon: <MarkdownIcon />, color: '#24292e' },
   { id: 'resume',     label: 'Ashik_Siddike_Resume.pdf', icon: <PdfIcon />, color: '#f44336', download: true },
   { id: 'browser',    label: 'Simple Browser',   icon: <BrowserIcon />, color: '#34d399', hidden: true },
 ];

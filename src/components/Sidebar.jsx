@@ -18,10 +18,49 @@ const GitBranchIcon = () => (
 
 const Sidebar = ({ activePage, setActivePage, openTabs = [], sidebarOpen = true, openCopilotChat, activityActive = 'explorer' }) => {
   const [open, setOpen] = React.useState({ PORTFOLIO: true, 'OPEN EDITORS': false, OUTLINE: false });
+  const [blogFolderOpen, setBlogFolderOpen] = React.useState(true);
 
   const openFiles = PAGES.filter(p => openTabs.includes(p.id) && !p.download);
 
   const toggle = (label) => setOpen(o => ({ ...o, [label]: !o[label] }));
+
+  const renderPageItem = (page, isNested = false) => {
+    const isActive = activePage === page.id && !page.download;
+    const isDownload = !!page.download;
+    return (
+      <div
+        key={page.id}
+        className={`sidebar__file${isActive ? ' active' : ''}${isDownload ? ' download-file' : ''}`}
+        onClick={() => {
+          if (isDownload) {
+            const link = document.createElement("a");
+            link.href = "/Ashik_Siddike_Resume.pdf";
+            link.download = "Ashik_Siddike_Resume.pdf";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            return;
+          }
+          setActivePage(page.id);
+        }}
+        style={{ 
+          cursor: 'pointer', 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '6px',
+          paddingLeft: isNested ? '38px' : '24px'
+        }}
+      >
+        <span className="sidebar__file-icon" style={{ display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>
+          {page.icon}
+        </span>
+        <span className="truncate" style={{ flex: 1 }}>{page.label}</span>
+        {isDownload && (
+          <span className="download-arrow-indicator" style={{ fontSize: '11px', transition: 'opacity 0.15s' }}>↓</span>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="sidebar" style={{ display: sidebarOpen ? 'flex' : 'none' }}>
@@ -40,37 +79,48 @@ const Sidebar = ({ activePage, setActivePage, openTabs = [], sidebarOpen = true,
               PORTFOLIO
             </div>
 
-            {open['PORTFOLIO'] && PAGES.filter(p => !p.hidden).map((page) => {
-              const isActive = activePage === page.id && !page.download;
-              const isDownload = !!page.download;
-              return (
-                <div
-                  key={page.id}
-                  className={`sidebar__file${isActive ? ' active' : ''}${isDownload ? ' download-file' : ''}`}
-                  onClick={() => {
-                    if (isDownload) {
-                      const link = document.createElement("a");
-                      link.href = "/Ashik_Siddike_Resume.pdf";
-                      link.download = "Ashik_Siddike_Resume.pdf";
-                      document.body.appendChild(link);
-                      link.click();
-                      document.body.removeChild(link);
-                      return;
-                    }
-                    setActivePage(page.id);
-                  }}
-                  style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
-                >
-                  <span className="sidebar__file-icon" style={{ display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>
-                    {page.icon}
-                  </span>
-                  <span className="truncate" style={{ flex: 1 }}>{page.label}</span>
-                  {isDownload && (
-                    <span className="download-arrow-indicator" style={{ fontSize: '11px', transition: 'opacity 0.15s' }}>↓</span>
-                  )}
+            {open['PORTFOLIO'] && (
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                {/* 📁 blog folder dropdown */}
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div
+                    onClick={() => setBlogFolderOpen(!blogFolderOpen)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '4px 12px 4px 14px',
+                      color: 'var(--dim)',
+                      fontSize: '12px',
+                      cursor: 'pointer',
+                      userSelect: 'none'
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.color = 'var(--bright)'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'var(--dim)'}
+                  >
+                    <span style={{
+                      transform: blogFolderOpen ? 'rotate(0deg)' : 'rotate(-90deg)',
+                      transition: 'transform 0.15s',
+                      display: 'inline-flex',
+                      alignItems: 'center'
+                    }}>
+                      <ChevronDown />
+                    </span>
+                    <span style={{ color: '#e2b34c', fontSize: '13px', display: 'inline-flex', alignItems: 'center' }}>
+                      📁
+                    </span>
+                    <span style={{ fontWeight: 600, fontSize: '12px', fontFamily: 'JetBrains Mono, monospace' }}>
+                      blog
+                    </span>
+                  </div>
+                  
+                  {blogFolderOpen && PAGES.filter(p => !p.hidden && p.folder === 'blog').map((page) => renderPageItem(page, true))}
                 </div>
-              );
-            })}
+
+                {/* Root-level files */}
+                {PAGES.filter(p => !p.hidden && !p.folder).map((page) => renderPageItem(page, false))}
+              </div>
+            )}
           </div>
 
           {/* Bottom Dropdowns and Copilot Panel */}
