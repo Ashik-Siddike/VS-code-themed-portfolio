@@ -42,12 +42,13 @@ function App() {
   const [showTerminal, setShowTerminal]     = useState(false);
   const [sidebarOpen, setSidebarOpen]       = useState(true);
   const [activityActive, setActivityActive] = useState('explorer');
-  const [theme, setTheme]                   = useState(() => localStorage.getItem('vs-code-portfolio-theme') || 'default');
+  const [theme, setTheme]                   = useState(() => localStorage.getItem('aahana-portfolio-theme') || 'default');
   const [pageKey, setPageKey]               = useState(0);
   const [showPalette, setShowPalette]       = useState(false);
   const [showSettings, setShowSettings]     = useState(false);
   const [toast, setToast]                   = useState(null);
   const [cursor, setCursor]                 = useState({ ln: 1, col: 1 });
+  const [terminalTab, setTerminalTab]       = useState('terminal');
 
   /* ── Apply theme ── */
   useEffect(() => {
@@ -66,7 +67,7 @@ function App() {
   /* ── Theme change ── */
   const handleThemeChange = useCallback((newTheme) => {
     setTheme(newTheme);
-    localStorage.setItem('vs-code-portfolio-theme', newTheme);
+    localStorage.setItem('aahana-portfolio-theme', newTheme);
     const labels = {
       default: 'Default Dark+', 'rose-pine': 'Rosé Pine',
       'tokyo-night': 'Tokyo Night', catppuccin: 'Catppuccin Mocha',
@@ -111,6 +112,13 @@ function App() {
       setActivityActive(actId);
     }
   }, []);
+
+  /* ── Open Copilot Chat ── */
+  const openCopilotChat = useCallback(() => {
+    setShowTerminal(true);
+    setTerminalTab('copilot');
+    showToast("Opening Ashik's Copilot Chat...", "🤖");
+  }, [showToast]);
 
   /* ── Global keyboard shortcuts ── */
   useEffect(() => {
@@ -184,10 +192,17 @@ function App() {
         openSettings={() => setShowSettings(true)}
         openPalette={() => setShowPalette(true)}
         showToast={showToast}
+        openCopilotChat={openCopilotChat}
       />
 
       {/* Sidebar */}
-      <Sidebar activePage={activePage} setActivePage={navigate} openTabs={openTabs} sidebarOpen={sidebarOpen} />
+      <Sidebar
+        activePage={activePage}
+        setActivePage={navigate}
+        openTabs={openTabs}
+        sidebarOpen={sidebarOpen}
+        openCopilotChat={openCopilotChat}
+      />
 
       {/* Editor Area */}
       <div className="editor-area">
@@ -224,6 +239,8 @@ function App() {
             setActivePage={navigate}
             onClose={() => setShowTerminal(false)}
             showToast={showToast}
+            activeTab={terminalTab}
+            setActiveTab={setTerminalTab}
           />
         )}
       </div>

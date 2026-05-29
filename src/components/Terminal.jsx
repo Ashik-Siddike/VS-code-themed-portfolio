@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { PAGES } from '../constants';
 
-const Terminal = ({ activePage, setActivePage, onClose, showToast }) => {
-  const [activeTab, setActiveTab] = useState('terminal');
+const Terminal = ({ activePage, setActivePage, onClose, showToast, activeTab, setActiveTab }) => {
   const [history, setHistory] = useState([
     { type: 'info', text: 'Welcome to Ashik\'s Interactive Shell! Try running some commands.' },
     { type: 'info', text: 'Commands: cat <file>, open <file>, whoami, echo <text>, date, git log, python --version, clear' }
@@ -13,17 +12,62 @@ const Terminal = ({ activePage, setActivePage, onClose, showToast }) => {
   const terminalEndRef = useRef(null);
   const inputRef = useRef(null);
 
+  // Copilot Chat States
+  const [chatMessages, setChatMessages] = useState([
+    {
+      sender: 'ai',
+      text: "Hi! I am Ashik's AI Copilot. Ask me anything about Ashik's skills, projects, work experience, or contact details! Try typing 'tell me about his skills' or 'what projects did he build?'"
+    }
+  ]);
+  const [chatInputVal, setChatInputVal] = useState('');
+  const chatEndRef = useRef(null);
+  const chatInputRef = useRef(null);
+
   // Auto-scroll to bottom of logs on updates
   useEffect(() => {
     terminalEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [history]);
 
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chatMessages]);
+
   // Auto-focus input on mount or tab switch
   useEffect(() => {
     if (activeTab === 'terminal') {
       inputRef.current?.focus();
+    } else if (activeTab === 'copilot') {
+      chatInputRef.current?.focus();
     }
   }, [activeTab]);
+
+  const handleSendChatMessage = (text) => {
+    const trimmed = text.trim();
+    if (!trimmed) return;
+
+    // 1. Add user message
+    setChatMessages(prev => [...prev, { sender: 'user', text: trimmed }]);
+
+    // 2. Generate response
+    let response = '';
+    const q = trimmed.toLowerCase();
+
+    if (q.includes('skill') || q.includes('stack') || q.includes('tech') || q.includes('languages') || q.includes('learn')) {
+      response = "Ashik is highly skilled in: Python (FastAPI, web scraping), TypeScript, JavaScript, Next.js, React, n8n, Make.com, PostgreSQL, MongoDB, and Gemini/OpenAI API integrations. He loves building intelligent automation pipelines and scalable SaaS solutions!";
+    } else if (q.includes('project') || q.includes('build') || q.includes('repo') || q.includes('work')) {
+      response = "Ashik has built several noteworthy projects:\n\n✦ **Affiliate Automation System** (Python, Gemini AI, n8n)\n✦ **Affiliate Automation Next.js Site** (TypeScript, Next.js, Vercel)\n✦ **SaaS Dashboard** (Next.js, TypeScript)\n✦ **Aronnyo — Kids Learning Platform** (TypeScript, Next.js)\n✦ **Play Learn Grow Kids (247School)** (React, Next.js)\n✦ **Social Media Growing Agent** (Python, n8n)\n\nYou can click on these files in the file explorer to view details!";
+    } else if (q.includes('experience') || q.includes('job') || q.includes('career') || q.includes('history')) {
+      response = "Ashik's professional experience includes:\n\n1. **Lead AI Automation Developer** (Freelance & Indie, 2025 - Present) — building scalable LLM tools, web scrapers, and marketing automation pipelines.\n2. **Full-Stack Developer Intern** (Tech Solutions, 2024 - 2025) — Next.js, Tailwind CSS, Prisma, Node.js.\n3. **Web Developer** (IndieLabs Agency, 2023 - 2024) — vanilla HTML/CSS/JS interfaces and SEO optimization.";
+    } else if (q.includes('contact') || q.includes('email') || q.includes('hire') || q.includes('facebook') || q.includes('linkedin')) {
+      response = "You can contact Ashik via:\n\n✉️ Email: ashiksiddike@gmail.com\n🔗 GitHub: github.com/Ashik-Siddike\n🔗 LinkedIn: linkedin.com/in/ashik-siddike\n\nHe is currently open to new work and freelance collaborations!";
+    } else {
+      response = "Interesting question! Ashik is a passionate full-stack developer who loves combining AI APIs and modern web frameworks to create automation systems. You can check his homepage (home.tsx) or read his README.md for more info!";
+    }
+
+    setTimeout(() => {
+      setChatMessages(prev => [...prev, { sender: 'ai', text: response }]);
+    }, 400);
+  };
 
   const handleCommand = (cmdStr) => {
     const trimmed = cmdStr.trim();
@@ -140,17 +184,25 @@ Date:   Wed May 27 22:15:33 2026
   };
 
   return (
-    <div className="terminal-panel" onClick={() => inputRef.current?.focus()}>
+    <div className="terminal-panel" onClick={() => {
+      if (activeTab === 'terminal') inputRef.current?.focus();
+      else if (activeTab === 'copilot') chatInputRef.current?.focus();
+    }}>
       {/* Terminal tabs */}
       <div className="terminal-panel__header" onClick={(e) => e.stopPropagation()}>
         <div className="terminal-panel__tabs">
-          {['TERMINAL', 'PROBLEMS', 'OUTPUT'].map(tab => (
+          {[
+            { id: 'terminal', label: 'TERMINAL' },
+            { id: 'copilot', label: '✦ COPILOT CHAT' },
+            { id: 'problems', label: 'PROBLEMS' },
+            { id: 'output', label: 'OUTPUT' }
+          ].map(tab => (
             <button
-              key={tab}
-              className={`terminal-panel__tab${activeTab === tab.toLowerCase() ? ' active' : ''}`}
-              onClick={() => setActiveTab(tab.toLowerCase())}
+              key={tab.id}
+              className={`terminal-panel__tab${activeTab === tab.id ? ' active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
             >
-              {tab}
+              {tab.label}
             </button>
           ))}
         </div>
@@ -187,6 +239,60 @@ Date:   Wed May 27 22:15:33 2026
               />
             </div>
             <div ref={terminalEndRef} />
+          </div>
+        )}
+
+        {activeTab === 'copilot' && (
+          <div className="terminal-copilot-chat" style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '10px' }} onClick={(e) => e.stopPropagation()}>
+            <div className="copilot-messages thin-scroll" style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', paddingBottom: '10px', paddingRight: '4px' }}>
+              {chatMessages.map((msg, i) => (
+                <div key={i} style={{
+                  alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start',
+                  background: msg.sender === 'user' ? 'rgba(0, 122, 204, 0.15)' : 'rgba(255, 255, 255, 0.02)',
+                  border: msg.sender === 'user' ? '1px solid rgba(0, 122, 204, 0.3)' : '1px solid rgba(255, 255, 255, 0.05)',
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                  maxWidth: '85%',
+                  fontSize: '12px',
+                  lineHeight: 1.55,
+                  color: 'var(--text)'
+                }}>
+                  <div style={{ fontWeight: 'bold', fontSize: '9px', color: msg.sender === 'user' ? 'var(--blue)' : 'var(--purple)', marginBottom: '3px', letterSpacing: '0.05em' }}>
+                    {msg.sender === 'user' ? 'YOU' : '✦ COPILOT AI'}
+                  </div>
+                  <div style={{ whiteSpace: 'pre-wrap' }}>{msg.text}</div>
+                </div>
+              ))}
+              <div ref={chatEndRef} />
+            </div>
+            <div className="copilot-input-line" style={{ display: 'flex', gap: '8px', borderTop: '1px solid var(--border)', paddingTop: '8px', marginTop: '4px' }}>
+              <input
+                ref={chatInputRef}
+                type="text"
+                className="terminal-input"
+                placeholder="Ask Copilot about Ashik's skills, experience, projects..."
+                value={chatInputVal}
+                onChange={(e) => setChatInputVal(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleSendChatMessage(chatInputVal);
+                    setChatInputVal('');
+                  }
+                }}
+                style={{ flex: 1, padding: '5px 10px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)', outline: 'none' }}
+              />
+              <button
+                onClick={() => {
+                  handleSendChatMessage(chatInputVal);
+                  setChatInputVal('');
+                }}
+                style={{ padding: '5px 14px', borderRadius: '4px', background: 'var(--blue2)', border: 'none', color: 'white', fontWeight: 'bold', cursor: 'pointer', fontSize: '11px', transition: 'filter 0.15s' }}
+                onMouseEnter={e => e.currentTarget.style.filter = 'brightness(1.15)'}
+                onMouseLeave={e => e.currentTarget.style.filter = 'none'}
+              >
+                Send
+              </button>
+            </div>
           </div>
         )}
 

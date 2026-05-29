@@ -8,7 +8,7 @@ import {
   SettingsIcon
 } from './Icons';
 
-const ActivityBar = ({ active, setActive, openSettings, openPalette, showToast }) => {
+const ActivityBar = ({ active, setActive, openSettings, openPalette, showToast, openCopilotChat }) => {
   const icons = [
     {
       id: 'explorer',
@@ -54,7 +54,7 @@ const ActivityBar = ({ active, setActive, openSettings, openPalette, showToast }
       document.body.removeChild(link);
       showToast?.("Downloading Ashik's Resume...", "📄");
     } else if (item.action === 'copilot') {
-      showToast?.("Ashik's Copilot is currently offline. Feel free to contact via Email!", "🤖");
+      openCopilotChat?.();
     } else {
       setActive(item.id === active ? null : item.id);
     }
