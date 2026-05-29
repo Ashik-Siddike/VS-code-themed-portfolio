@@ -247,6 +247,7 @@ function App() {
         openTabs={openTabs}
         sidebarOpen={sidebarOpen}
         openCopilotChat={openCopilotChat}
+        activityActive={activityActive}
       />
 
       {/* Editor Area */}
