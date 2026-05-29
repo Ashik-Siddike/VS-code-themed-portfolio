@@ -42,19 +42,21 @@ const BrowserIcon = () => (
 );
 
 const ShellIcon = () => (
-  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="4 17 10 11 4 5" />
-    <line x1="12" y1="19" x2="20" y2="19" />
+  <svg viewBox="0 0 24 24" width="17" height="17">
+    <rect width="24" height="24" rx="3" fill="#4ec9b0" opacity="0.18" />
+    <polyline points="6 16 11 11 6 6" fill="none" stroke="#4ec9b0" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    <line x1="13" y1="17" x2="19" y2="17" stroke="#4ec9b0" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
 const GitGraphIcon = () => (
-  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="18" cy="18" r="3" />
-    <circle cx="6" cy="6" r="3" />
-    <circle cx="6" cy="18" r="3" />
-    <path d="M18 18h-6a4 4 0 0 1-4-4V9" />
-    <line x1="6" y1="9" x2="6" y2="15" />
+  <svg viewBox="0 0 24 24" width="17" height="17">
+    <rect width="24" height="24" rx="3" fill="#ce9178" opacity="0.18" />
+    <circle cx="17" cy="17" r="2.5" fill="none" stroke="#ce9178" strokeWidth="1.8" />
+    <circle cx="7" cy="7" r="2.5" fill="none" stroke="#ce9178" strokeWidth="1.8" />
+    <circle cx="7" cy="17" r="2.5" fill="none" stroke="#ce9178" strokeWidth="1.8" />
+    <path d="M17 17h-5a4 4 0 0 1-4-4V9" fill="none" stroke="#ce9178" strokeWidth="1.8" />
+    <line x1="7" y1="9" x2="7" y2="15" stroke="#ce9178" strokeWidth="1.8" />
   </svg>
 );
 

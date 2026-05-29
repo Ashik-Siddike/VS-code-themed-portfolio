@@ -16,6 +16,12 @@ const GitBranchIcon = () => (
   </svg>
 );
 
+const FolderIcon = () => (
+  <svg viewBox="0 0 24 24" width="16" height="16" style={{ flexShrink: 0 }}>
+    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" fill="#e2b34c" fillOpacity="0.18" stroke="#e2b34c" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
 const Sidebar = ({ activePage, setActivePage, openTabs = [], sidebarOpen = true, openCopilotChat, activityActive = 'explorer' }) => {
   const [open, setOpen] = React.useState({ PORTFOLIO: true, 'OPEN EDITORS': false, OUTLINE: false });
   const [blogFolderOpen, setBlogFolderOpen] = React.useState(false);
@@ -48,10 +54,17 @@ const Sidebar = ({ activePage, setActivePage, openTabs = [], sidebarOpen = true,
           display: 'flex', 
           alignItems: 'center', 
           gap: '6px',
-          paddingLeft: isNested ? '38px' : '24px'
+          paddingLeft: isNested ? '38px' : '24px',
+          fontSize: '11px'
         }}
       >
-        <span className="sidebar__file-icon" style={{ display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>
+        <span className="sidebar__file-icon" style={{ 
+          display: 'inline-flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          width: '18px', 
+          flexShrink: 0 
+        }}>
           {page.icon}
         </span>
         <span className="truncate" style={{ flex: 1 }}>{page.label}</span>
@@ -91,7 +104,7 @@ const Sidebar = ({ activePage, setActivePage, openTabs = [], sidebarOpen = true,
                       gap: '6px',
                       padding: '4px 12px 4px 14px',
                       color: 'var(--dim)',
-                      fontSize: '12px',
+                      fontSize: '11px',
                       cursor: 'pointer',
                       userSelect: 'none'
                     }}
@@ -102,14 +115,22 @@ const Sidebar = ({ activePage, setActivePage, openTabs = [], sidebarOpen = true,
                       transform: blogFolderOpen ? 'rotate(0deg)' : 'rotate(-90deg)',
                       transition: 'transform 0.15s',
                       display: 'inline-flex',
-                      alignItems: 'center'
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '10px'
                     }}>
                       <ChevronDown />
                     </span>
-                    <span style={{ color: '#e2b34c', fontSize: '13px', display: 'inline-flex', alignItems: 'center' }}>
-                      📁
+                    <span style={{ 
+                      display: 'inline-flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                      width: '18px',
+                      flexShrink: 0
+                    }}>
+                      <FolderIcon />
                     </span>
-                    <span style={{ fontWeight: 600, fontSize: '12px', fontFamily: 'JetBrains Mono, monospace' }}>
+                    <span style={{ fontWeight: 600, fontFamily: 'JetBrains Mono, monospace' }}>
                       blog
                     </span>
                   </div>
