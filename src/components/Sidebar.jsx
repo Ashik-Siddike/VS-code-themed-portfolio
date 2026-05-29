@@ -40,7 +40,7 @@ const Sidebar = ({ activePage, setActivePage, openTabs = [], sidebarOpen = true,
               PORTFOLIO
             </div>
 
-            {open['PORTFOLIO'] && PAGES.map((page) => {
+            {open['PORTFOLIO'] && PAGES.filter(p => !p.hidden).map((page) => {
               const isActive = activePage === page.id && !page.download;
               const isDownload = !!page.download;
               return (

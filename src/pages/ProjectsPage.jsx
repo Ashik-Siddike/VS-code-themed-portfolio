@@ -19,7 +19,7 @@ const FolderIcon = () => (
   </svg>
 );
 
-const LinkRow = ({ github, live }) => (
+const LinkRow = ({ github, live, title, openInSimpleBrowser }) => (
   <div style={{ display: 'flex', gap: '12px', color: 'var(--dim)' }}>
     {github && (
       <a href={github} target="_blank" rel="noreferrer"
@@ -31,15 +31,39 @@ const LinkRow = ({ github, live }) => (
         <GitHubIcon /> Code
       </a>
     )}
-    {live && (
-      <a href={live} target="_blank" rel="noreferrer"
-        style={{ color: 'inherit', transition: 'color 0.15s', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px' }}
-        onMouseEnter={e => e.currentTarget.style.color = 'var(--green)'}
-        onMouseLeave={e => e.currentTarget.style.color = 'var(--dim)'}
-        title="Live Demo"
-      >
-        <ExternalIcon /> Live
-      </a>
+    {live ? (
+      openInSimpleBrowser ? (
+        <button
+          onClick={() => openInSimpleBrowser(live, title)}
+          style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: 'inherit', transition: 'color 0.15s', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontFamily: 'inherit' }}
+          onMouseEnter={e => e.currentTarget.style.color = 'var(--green)'}
+          onMouseLeave={e => e.currentTarget.style.color = 'var(--dim)'}
+          title="Open in Simple Browser"
+        >
+          <ExternalIcon /> Live
+        </button>
+      ) : (
+        <a href={live} target="_blank" rel="noreferrer"
+          style={{ color: 'inherit', transition: 'color 0.15s', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px' }}
+          onMouseEnter={e => e.currentTarget.style.color = 'var(--green)'}
+          onMouseLeave={e => e.currentTarget.style.color = 'var(--dim)'}
+          title="Live Demo"
+        >
+          <ExternalIcon /> Live
+        </a>
+      )
+    ) : (
+      openInSimpleBrowser && (
+        <button
+          onClick={() => openInSimpleBrowser('', title)}
+          style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: 'inherit', transition: 'color 0.15s', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontFamily: 'inherit' }}
+          onMouseEnter={e => e.currentTarget.style.color = 'var(--yellow)'}
+          onMouseLeave={e => e.currentTarget.style.color = 'var(--dim)'}
+          title="Run script simulation"
+        >
+          ⚡ Run
+        </button>
+      )
     )}
   </div>
 );
@@ -101,7 +125,7 @@ const FALLBACK_PROJECTS = [
   }
 ];
 
-const ProjectsPage = () => {
+const ProjectsPage = ({ openInSimpleBrowser }) => {
   const [projects, setProjects] = useState(FALLBACK_PROJECTS);
   const [loading, setLoading] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
@@ -274,7 +298,7 @@ const ProjectsPage = () => {
                       )}
                     </div>
                     <div onClick={e => e.stopPropagation()}>
-                      <LinkRow github={p.github} live={p.live} />
+                      <LinkRow github={p.github} live={p.live} title={p.title} openInSimpleBrowser={openInSimpleBrowser} />
                     </div>
                   </div>
                   <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--bright)', marginBottom: '10px' }}>{p.title}</h3>
@@ -319,7 +343,7 @@ const ProjectsPage = () => {
                   <span style={{ color: p.accent }}><FolderIcon /></span>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }} onClick={e => e.stopPropagation()}>
                     {p.live && <span style={{ fontSize: '9px', color: 'var(--green)', background: 'rgba(78,201,176,0.1)', padding: '1px 6px', borderRadius: '3px', border: '1px solid rgba(78,201,176,0.2)' }}>🌐 LIVE</span>}
-                    <LinkRow github={p.github} live={p.live} />
+                    <LinkRow github={p.github} live={p.live} title={p.title} openInSimpleBrowser={openInSimpleBrowser} />
                   </div>
                 </div>
                 <h3 style={{ fontSize: '13px', fontWeight: 700, color: 'var(--bright)', marginBottom: '8px' }}>{p.title}</h3>
@@ -455,10 +479,36 @@ const ProjectsPage = () => {
                     <GitHubIcon /> View Source Code
                   </a>
                 )}
-                {selectedProject.live && (
-                  <a href={selectedProject.live} target="_blank" rel="noreferrer" className="modal-action-btn" style={{ ...modalBtnStyle, background: 'var(--blue2)', color: 'white', fontWeight: 'bold' }}>
-                    <ExternalIcon /> Open Live Demo
-                  </a>
+                {selectedProject.live ? (
+                  openInSimpleBrowser ? (
+                    <button 
+                      onClick={() => {
+                        openInSimpleBrowser(selectedProject.live, selectedProject.title);
+                        setSelectedProject(null);
+                      }} 
+                      className="modal-action-btn" 
+                      style={{ ...modalBtnStyle, background: 'var(--blue2)', color: 'white', fontWeight: 'bold', border: 'none' }}
+                    >
+                      <ExternalIcon /> Open in Simple Browser
+                    </button>
+                  ) : (
+                    <a href={selectedProject.live} target="_blank" rel="noreferrer" className="modal-action-btn" style={{ ...modalBtnStyle, background: 'var(--blue2)', color: 'white', fontWeight: 'bold' }}>
+                      <ExternalIcon /> Open Live Demo
+                    </a>
+                  )
+                ) : (
+                  openInSimpleBrowser && (
+                    <button 
+                      onClick={() => {
+                        openInSimpleBrowser('', selectedProject.title);
+                        setSelectedProject(null);
+                      }} 
+                      className="modal-action-btn" 
+                      style={{ ...modalBtnStyle, background: 'var(--blue2)', color: 'white', fontWeight: 'bold', border: 'none' }}
+                    >
+                      ⚡ Run Script Simulation
+                    </button>
+                  )
                 )}
               </div>
             </div>

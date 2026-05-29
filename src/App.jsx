@@ -21,6 +21,7 @@ import ReadmePage    from './pages/ReadmePage';
 import WorkHistoryPage from './pages/WorkHistoryPage';
 
 import AdminPage     from './pages/AdminPage';
+import BrowserPage   from './pages/BrowserPage';
 
 import { PAGES } from './constants';
 
@@ -33,11 +34,13 @@ const BREADCRUMBS = {
   contact:    ['portfolio', 'src', 'contact.css'],
   readme:     ['portfolio', 'src', 'README.md'],
   admin:      ['portfolio', 'src', 'admin.jsx'],
+  browser:    ['portfolio', 'src', 'browser.tsx'],
 };
 const PAGE_COMPONENTS = {
   home: HomePage, about: AboutPage, projects: ProjectsPage,
   skills: ExperiencePage, experience: WorkHistoryPage,
   contact: ContactPage, readme: ReadmePage, admin: AdminPage,
+  browser: BrowserPage,
 };
 
 function App() {
@@ -56,6 +59,8 @@ function App() {
   const [cursor, setCursor]                 = useState({ ln: 1, col: 1 });
   const [terminalTab, setTerminalTab]       = useState('terminal');
   const [zoom, setZoom]                     = useState(1);
+  const [browserUrl, setBrowserUrl]         = useState('');
+  const [browserTitle, setBrowserTitle]     = useState('Simple Browser');
 
   /* ── Apply theme ── */
   useEffect(() => {
@@ -312,7 +317,16 @@ function App() {
           {/* Page content */}
           <div className="editor-content">
             <div key={pageKey} className="pane-enter">
-              <ActivePage setActivePage={navigate} />
+              <ActivePage
+                setActivePage={navigate}
+                browserUrl={browserUrl}
+                browserTitle={browserTitle}
+                openInSimpleBrowser={(url, title) => {
+                  setBrowserUrl(url);
+                  setBrowserTitle(title);
+                  navigate('browser');
+                }}
+              />
             </div>
           </div>
 
