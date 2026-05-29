@@ -92,8 +92,15 @@ const Terminal = ({ activePage, setActivePage, onClose, showToast, activeTab, se
       case 'clear':
         setHistory([]);
         return;
+      case 'help':
+        output = 'Available commands: ls, cat <file>, open <file>, whoami, echo <text>, date, git log, python --version, clear';
+        break;
+      case 'ls':
+      case 'dir':
+        output = PAGES.map(p => p.label).join('    ');
+        break;
       case 'whoami':
-        output = 'ashik-siddike · Full-Stack Developer & AI Automation Builder';
+        output = 'ashik-siddike · Full-Stack Developer & AI Automation Developer';
         break;
       case 'date':
         output = new Date().toString();
@@ -110,13 +117,13 @@ const Terminal = ({ activePage, setActivePage, onClose, showToast, activeTab, se
         break;
       case 'git':
         if (arg === 'log') {
-          output = `commit b4a287dfd12ea39c148
+          output = `commit b8c86be2e4dfa6a
 Author: Ashik Siddike <ashiksiddike@gmail.com>
 Date:   ${new Date().toDateString()}
 
-    feat: add beautiful custom SVG file icons and interactive terminal shell
+    feat: integrate CV data, add side-by-side VS Code Copilot panel, interactive menus, perfect JSON icon alignment, and map portfolio links to ashiksiddike.com
 
-commit a827dcbe77b61a38b1f
+commit d3d0b7d0392eb13
 Author: Ashik Siddike <ashiksiddike@gmail.com>
 Date:   Wed May 27 22:15:33 2026
 
