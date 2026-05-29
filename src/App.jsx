@@ -42,7 +42,7 @@ function App() {
   const [showTerminal, setShowTerminal]     = useState(false);
   const [sidebarOpen, setSidebarOpen]       = useState(true);
   const [activityActive, setActivityActive] = useState('explorer');
-  const [theme, setTheme]                   = useState(() => localStorage.getItem('aahana-portfolio-theme') || 'default');
+  const [theme, setTheme]                   = useState(() => localStorage.getItem('vs-code-portfolio-theme') || 'default');
   const [pageKey, setPageKey]               = useState(0);
   const [showPalette, setShowPalette]       = useState(false);
   const [showSettings, setShowSettings]     = useState(false);
@@ -66,7 +66,7 @@ function App() {
   /* ── Theme change ── */
   const handleThemeChange = useCallback((newTheme) => {
     setTheme(newTheme);
-    localStorage.setItem('aahana-portfolio-theme', newTheme);
+    localStorage.setItem('vs-code-portfolio-theme', newTheme);
     const labels = {
       default: 'Default Dark+', 'rose-pine': 'Rosé Pine',
       'tokyo-night': 'Tokyo Night', catppuccin: 'Catppuccin Mocha',
