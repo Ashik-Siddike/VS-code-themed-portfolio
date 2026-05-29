@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { PAGES, THEMES } from '../constants';
 
-const StatusBar = ({ activePage, theme, cursor }) => {
+const StatusBar = ({ activePage, theme, cursor, openCopilot }) => {
   const page = PAGES.find(p => p.id === activePage);
   const [time, setTime] = useState(
     new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
@@ -20,6 +20,18 @@ const StatusBar = ({ activePage, theme, cursor }) => {
   return (
     <div className="status-bar">
       <div className="status-bar__left">
+        {/* Copilot button */}
+        <div
+          className="status-bar__item"
+          onClick={openCopilot}
+          title="Open Ashik's Copilot"
+          style={{ cursor: 'pointer', gap: '5px', color: 'var(--purple)' }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(168,85,247,0.15)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+        >
+          <span style={{ fontSize: '11px' }}>✦</span>
+          <span>Ashik's Copilot</span>
+        </div>
         {/* Git branch */}
         <div className="status-bar__item" title="Git branch">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

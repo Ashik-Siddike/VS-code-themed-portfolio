@@ -10,6 +10,7 @@ import StatusBar   from './components/StatusBar';
 import CommandPalette from './components/CommandPalette';
 import SettingsPanel  from './components/SettingsPanel';
 import Terminal       from './components/Terminal';
+import CopilotPanel  from './components/CopilotPanel';
 
 import HomePage      from './pages/HomePage';
 import AboutPage     from './pages/AboutPage';
@@ -18,6 +19,8 @@ import ExperiencePage from './pages/ExperiencePage';
 import ContactPage   from './pages/ContactPage';
 import ReadmePage    from './pages/ReadmePage';
 import WorkHistoryPage from './pages/WorkHistoryPage';
+
+import AdminPage     from './pages/AdminPage';
 
 import { PAGES } from './constants';
 
@@ -29,16 +32,18 @@ const BREADCRUMBS = {
   experience: ['portfolio', 'src', 'experience.ts'],
   contact:    ['portfolio', 'src', 'contact.css'],
   readme:     ['portfolio', 'src', 'README.md'],
+  admin:      ['portfolio', 'src', 'admin.jsx'],
 };
 const PAGE_COMPONENTS = {
   home: HomePage, about: AboutPage, projects: ProjectsPage,
   skills: ExperiencePage, experience: WorkHistoryPage,
-  contact: ContactPage, readme: ReadmePage,
+  contact: ContactPage, readme: ReadmePage, admin: AdminPage,
 };
 
 function App() {
-  const [activePage, setActivePage]         = useState('home');
-  const [openTabs, setOpenTabs]             = useState(['home']);
+  const initialPage = window.location.pathname === '/admin' ? 'admin' : 'home';
+  const [activePage, setActivePage]         = useState(initialPage);
+  const [openTabs, setOpenTabs]             = useState([initialPage]);
   const [showTerminal, setShowTerminal]     = useState(false);
   const [sidebarOpen, setSidebarOpen]       = useState(true);
   const [activityActive, setActivityActive] = useState('explorer');
@@ -46,9 +51,11 @@ function App() {
   const [pageKey, setPageKey]               = useState(0);
   const [showPalette, setShowPalette]       = useState(false);
   const [showSettings, setShowSettings]     = useState(false);
+  const [showCopilot, setShowCopilot]       = useState(false);
   const [toast, setToast]                   = useState(null);
   const [cursor, setCursor]                 = useState({ ln: 1, col: 1 });
   const [terminalTab, setTerminalTab]       = useState('terminal');
+  const [zoom, setZoom]                     = useState(1);
 
   /* ── Apply theme ── */
   useEffect(() => {
@@ -116,12 +123,10 @@ function App() {
     }
   }, []);
 
-  /* ── Open Copilot Chat ── */
+  /* ── Open Copilot Panel (right-side slide-in) ── */
   const openCopilotChat = useCallback(() => {
-    setShowTerminal(true);
-    setTerminalTab('copilot');
-    showToast("Opening Ashik's Copilot Chat...", "🤖");
-  }, [showToast]);
+    setShowCopilot(prev => !prev);
+  }, []);
 
   /* ── Global keyboard shortcuts ── */
   useEffect(() => {
@@ -137,6 +142,10 @@ function App() {
       // Ctrl+` → Toggle Terminal
       if ((e.ctrlKey || e.metaKey) && e.key === '`') {
         e.preventDefault(); setShowTerminal(prev => !prev); return;
+      }
+      // Ctrl+Shift+C → Toggle Copilot
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'c' || e.key === 'C')) {
+        e.preventDefault(); setShowCopilot(prev => !prev); return;
       }
       // Ctrl+B → Toggle Sidebar
       if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
@@ -176,17 +185,39 @@ function App() {
   const crumbs = BREADCRUMBS[activePage] || ['portfolio'];
 
   return (
-    <div className="app-grid" style={{ gridTemplateColumns: sidebarOpen ? '48px 220px 1fr' : '48px 0px 1fr' }}>
+    <div className="app-grid" style={{ 
+      gridTemplateColumns: sidebarOpen ? '48px 220px 1fr' : '48px 0px 1fr',
+      zoom: zoom
+    }}>
       {/* Title Bar */}
       <TitleBar
         theme={theme}
         setTheme={handleThemeChange}
         openPalette={() => setShowPalette(true)}
         openSettings={() => setShowSettings(true)}
+        openCopilot={() => setShowCopilot(prev => !prev)}
+        copilotOpen={showCopilot}
       />
 
       {/* Menu Bar */}
-      <MenuBar activePage={activePage} navigate={navigate} openPalette={() => setShowPalette(true)} />
+      <MenuBar
+        activePage={activePage}
+        navigate={navigate}
+        openPalette={() => setShowPalette(true)}
+        openSettings={() => setShowSettings(true)}
+        showCopilot={showCopilot}
+        setShowCopilot={setShowCopilot}
+        showTerminal={showTerminal}
+        setShowTerminal={setShowTerminal}
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+        openTabs={openTabs}
+        setOpenTabs={setOpenTabs}
+        closeTab={closeTab}
+        showToast={showToast}
+        zoom={zoom}
+        setZoom={setZoom}
+      />
 
       {/* Mobile Top Header (compact-topbar) */}
       <div className="compact-topbar">
@@ -250,55 +281,61 @@ function App() {
         activityActive={activityActive}
       />
 
-      {/* Editor Area */}
-      <div className="editor-area" onClick={() => {
-        if (window.innerWidth < 1024 && sidebarOpen) {
-          setSidebarOpen(false);
-        }
-      }}>
-        <TabBar
-          activePage={activePage}
-          setActivePage={navigate}
-          openTabs={openTabs}
-          closeTab={closeTab}
-        />
+      {/* Editor + Copilot Row — side by side like real VS Code */}
+      <div className="editor-row">
 
-        {/* Breadcrumb */}
-        <div className="breadcrumb">
-          {crumbs.map((crumb, i) => (
-            <React.Fragment key={crumb + i}>
-              {i > 0 && <span className="breadcrumb__sep">›</span>}
-              <span className={`breadcrumb__item${i === crumbs.length - 1 ? ' current' : ''}`}>
-                {crumb}
-              </span>
-            </React.Fragment>
-          ))}
-        </div>
-
-        {/* Page content with pane-enter animation */}
-        <div className="editor-content">
-          <div key={pageKey} className="pane-enter">
-            <ActivePage setActivePage={navigate} />
-          </div>
-        </div>
-
-        {/* Terminal panel */}
-        {showTerminal && (
-          <Terminal
+        {/* Editor Area */}
+        <div className="editor-area" style={{ flex: 1, minWidth: 0 }} onClick={() => {
+          if (window.innerWidth < 1024 && sidebarOpen) {
+            setSidebarOpen(false);
+          }
+        }}>
+          <TabBar
             activePage={activePage}
             setActivePage={navigate}
-            onClose={() => setShowTerminal(false)}
-            showToast={showToast}
-            activeTab={terminalTab}
-            setActiveTab={setTerminalTab}
+            openTabs={openTabs}
+            closeTab={closeTab}
           />
-        )}
+
+          {/* Breadcrumb */}
+          <div className="breadcrumb">
+            {crumbs.map((crumb, i) => (
+              <React.Fragment key={crumb + i}>
+                {i > 0 && <span className="breadcrumb__sep">›</span>}
+                <span className={`breadcrumb__item${i === crumbs.length - 1 ? ' current' : ''}`}>
+                  {crumb}
+                </span>
+              </React.Fragment>
+            ))}
+          </div>
+
+          {/* Page content */}
+          <div className="editor-content">
+            <div key={pageKey} className="pane-enter">
+              <ActivePage setActivePage={navigate} />
+            </div>
+          </div>
+
+          {/* Terminal panel */}
+          {showTerminal && (
+            <Terminal
+              activePage={activePage}
+              setActivePage={navigate}
+              onClose={() => setShowTerminal(false)}
+              showToast={showToast}
+              activeTab={terminalTab}
+              setActiveTab={setTerminalTab}
+            />
+          )}
+        </div>
+
+        {/* Copilot secondary sidebar — integrated into layout */}
+        <CopilotPanel open={showCopilot} onClose={() => setShowCopilot(false)} />
+
       </div>
 
       {/* Status Bar */}
-      <StatusBar activePage={activePage} theme={theme} cursor={cursor} />
-
-      {/* Overlays */}
+      <StatusBar activePage={activePage} theme={theme} cursor={cursor} openCopilot={() => setShowCopilot(prev => !prev)} />
       {showPalette && (
         <CommandPalette
           onClose={() => setShowPalette(false)}
@@ -317,6 +354,7 @@ function App() {
           onToggleSidebar={() => setSidebarOpen(prev => !prev)}
         />
       )}
+
 
       {/* Toast */}
       {toast && (

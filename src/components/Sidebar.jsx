@@ -76,34 +76,7 @@ const Sidebar = ({ activePage, setActivePage, openTabs = [], sidebarOpen = true,
           {/* Bottom Dropdowns and Copilot Panel */}
           <div className="sidebar__bottom-container" style={{ marginTop: 'auto', borderTop: '1px solid var(--border)', background: 'var(--bg2)' }}>
             
-            {/* OPEN EDITORS Dropdown */}
-            <div className="sidebar__section" style={{ borderBottom: '1px solid var(--border)', padding: '2px 0' }}>
-              <div className="sidebar__section-title" onClick={() => toggle('OPEN EDITORS')}>
-                <span style={{ transform: open['OPEN EDITORS'] ? 'rotate(0deg)' : 'rotate(-90deg)', transition: 'transform 0.15s', display: 'inline-flex' }}>
-                  <ChevronDown />
-                </span>
-                OPEN EDITORS
-              </div>
-
-              {open['OPEN EDITORS'] && (openFiles.length ? openFiles : [PAGES[0]]).map((page) => {
-                const isActive = activePage === page.id;
-                return (
-                  <div
-                    key={page.id}
-                    className={`sidebar__file${isActive ? ' active' : ''}`}
-                    onClick={() => setActivePage(page.id)}
-                    style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
-                  >
-                    <span className="sidebar__file-icon" style={{ display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>
-                      {page.icon}
-                    </span>
-                    <span className="truncate" style={{ flex: 1 }}>{page.label}</span>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* OUTLINE Dropdown */}
+            {/* OPEN EDITORS Dropdown removed as requested */}
             <div className="sidebar__section" style={{ borderBottom: '1px solid var(--border)', padding: '2px 0' }}>
               <div className="sidebar__section-title" onClick={() => toggle('OUTLINE')}>
                 <span style={{ transform: open['OUTLINE'] ? 'rotate(0deg)' : 'rotate(-90deg)', transition: 'transform 0.15s', display: 'inline-flex' }}>

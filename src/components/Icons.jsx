@@ -123,7 +123,14 @@ export const JsIcon = () => (
 export const JsonIcon = () => (
   <svg viewBox="0 0 24 24" width="17" height="17">
     <rect width="24" height="24" rx="3" fill="#cbcb41" opacity="0.18" />
-    <text x="5" y="17" fontFamily="monospace" fontSize="12" fontWeight="bold" fill="#cbcb41">{"{ }"}</text>
+    <path
+      d="M10 6c-.8 0-1.5.7-1.5 1.5v3.25c0 .4-.35.75-.75.75h-.5a.5.5 0 0 0 0 1h.5c.4 0 .75.35.75.75v3.25c0 .8.7 1.5 1.5 1.5M14 6c.8 0 1.5.7 1.5 1.5v3.25c0 .4.35.75.75.75h.5a.5.5 0 0 1 0 1h-.5c-.4 0-.75.35-.75.75v3.25c0 .8-.7 1.5-1.5 1.5"
+      fill="none"
+      stroke="#cbcb41"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
 );
 

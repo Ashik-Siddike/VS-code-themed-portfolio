@@ -40,57 +40,57 @@ const SKILL_GROUPS = [
   {
     title: 'Languages',
     skills: [
-      { name: 'Python',     pct: 82, color: '#4ec9b0' },
-      { name: 'TypeScript', pct: 75, color: '#4fc1ff' },
-      { name: 'JavaScript', pct: 80, color: '#dcdcaa' },
-      { name: 'Java',       pct: 60, color: '#f44747' },
-      { name: 'HTML/CSS',   pct: 88, color: '#ce9178' },
+      { name: 'JavaScript', pct: 85, color: '#facc15' }, // Yellow
+      { name: 'TypeScript', pct: 78, color: '#38bdf8' }, // Sky Blue
+      { name: 'Python',     pct: 82, color: '#ff6fd8' }, // Pink
+      { name: 'HTML5',      pct: 90, color: '#f97316' }, // Orange
+      { name: 'CSS3',       pct: 88, color: '#38bdf8' }, // Sky Blue
     ],
   },
   {
-    title: 'AI & Automation',
+    title: 'Frontend Frameworks',
     skills: [
-      { name: 'Gemini AI',      pct: 85, color: '#ff6fd8' },
-      { name: 'OpenAI API',     pct: 78, color: '#4ec9b0' },
-      { name: 'n8n Workflows',  pct: 80, color: '#c586c0' },
-      { name: 'Make.com',       pct: 75, color: '#c586c0' },
-      { name: 'LangChain',      pct: 60, color: '#4ec9b0' },
-      { name: 'AI Agents',      pct: 70, color: '#ff6fd8' },
-    ],
-  },
-  {
-    title: 'Frontend',
-    skills: [
-      { name: 'Next.js',       pct: 85, color: '#cccccc' },
-      { name: 'React',         pct: 82, color: '#4fc1ff' },
-      { name: 'Tailwind CSS',  pct: 88, color: '#4fc1ff' },
-      { name: 'Framer Motion', pct: 65, color: '#ff6fd8' },
+      { name: 'React.js',      pct: 85, color: '#38bdf8' }, // Sky Blue
+      { name: 'Next.js',       pct: 82, color: '#a855f7' }, // Purple
+      { name: 'Tailwind CSS',  pct: 92, color: '#34d399' }, // Mint Green
+      { name: 'shadcn/ui',     pct: 80, color: '#facc15' }, // Yellow
+      { name: 'GSAP Animations',pct: 70, color: '#ff6fd8' }, // Pink
     ],
   },
   {
     title: 'Backend & APIs',
     skills: [
-      { name: 'Node.js',   pct: 72, color: '#4ec9b0' },
-      { name: 'FastAPI',   pct: 70, color: '#4ec9b0' },
-      { name: 'Prisma',    pct: 68, color: '#4ec9b0' },
-      { name: 'REST APIs', pct: 80, color: '#ce9178' },
+      { name: 'Node.js',       pct: 78, color: '#22c55e' }, // Green
+      { name: 'Express.js',    pct: 80, color: '#6366f1' }, // Indigo
+      { name: 'Firebase BaaS', pct: 84, color: '#f97316' }, // Orange
+      { name: 'REST APIs',     pct: 85, color: '#38bdf8' }, // Sky Blue
+      { name: 'FastAPI',       pct: 70, color: '#34d399' }, // Mint Green
     ],
   },
   {
     title: 'Databases',
     skills: [
-      { name: 'PostgreSQL', pct: 68, color: '#4fc1ff' },
-      { name: 'MongoDB',    pct: 65, color: '#4ec9b0' },
-      { name: 'Supabase',   pct: 72, color: '#4ec9b0' },
+      { name: 'MongoDB',      pct: 75, color: '#22c55e' }, // Green
+      { name: 'Supabase',     pct: 74, color: '#34d399' }, // Mint Green
+      { name: 'PostgreSQL',   pct: 68, color: '#38bdf8' }, // Sky Blue
+      { name: 'SQL Databases',pct: 70, color: '#a855f7' }, // Purple
     ],
   },
   {
-    title: 'DevOps & Tools',
+    title: 'Graphic Design',
     skills: [
-      { name: 'Git',            pct: 85, color: '#ce9178' },
-      { name: 'Vercel',         pct: 90, color: '#cccccc' },
-      { name: 'GitHub Actions', pct: 65, color: '#cccccc' },
-      { name: 'VS Code',        pct: 95, color: '#4fc1ff' },
+      { name: 'Adobe Photoshop',  pct: 92, color: '#38bdf8' }, // Sky Blue
+      { name: 'Adobe Illustrator',pct: 88, color: '#f97316' }, // Orange
+      { name: 'Figma UI/UX',      pct: 85, color: '#a855f7' }, // Purple
+    ],
+  },
+  {
+    title: 'Tools & DevOps',
+    skills: [
+      { name: 'Git & GitHub',        pct: 86, color: '#f97316' }, // Orange
+      { name: 'Chrome DevTools',     pct: 85, color: '#38bdf8' }, // Sky Blue
+      { name: 'AI Tools & Prompts',  pct: 90, color: '#ff6fd8' }, // Pink
+      { name: 'VS Code',             pct: 95, color: '#38bdf8' }, // Sky Blue
     ],
   },
 ];

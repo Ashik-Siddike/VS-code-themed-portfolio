@@ -103,19 +103,60 @@ const SOCIALS = [
       </svg>
     ),
   },
+  {
+    name: 'Phone',
+    url: 'tel:+8801918766033',
+    detail: '+880 1918 766033',
+    color: '#4ec9b0',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+      </svg>
+    ),
+  },
+  {
+    name: 'Location',
+    url: 'https://maps.google.com/?q=Magura,Bangladesh',
+    detail: 'Magura 7632, Bangladesh',
+    color: '#ff6fd8',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+        <circle cx="12" cy="10" r="3"/>
+      </svg>
+    ),
+  },
 ];
 
 const ContactPage = () => {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => { setLoading(false); setSent(true); }, 1200);
+    setErrorMsg('');
+    try {
+      const res = await fetch('/api/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSent(true);
+      } else {
+        setErrorMsg(data.message || 'Failed to send message');
+      }
+    } catch (err) {
+      setErrorMsg('Failed to connect to the server. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -171,6 +212,11 @@ const ContactPage = () => {
                 </label>
                 <textarea className="contact-input" name="message" value={form.message} onChange={handleChange} placeholder="Your message here..." rows={6} style={{ resize: 'none' }} required />
               </div>
+              {errorMsg && (
+                <div style={{ color: 'var(--red)', fontSize: '12px', marginTop: '4px', padding: '6px 12px', background: 'rgba(255,75,75,0.06)', border: '1px solid rgba(255,75,75,0.15)', borderRadius: '4px' }}>
+                  ⚠️ {errorMsg}
+                </div>
+              )}
               <button type="submit" className="btn-vscode btn-vscode-primary" disabled={loading}
                 style={{ alignSelf: 'flex-start', opacity: loading ? 0.7 : 1, transition: 'opacity 0.2s' }}
               >

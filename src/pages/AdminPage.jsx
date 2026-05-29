@@ -1,0 +1,775 @@
+import React, { useState, useEffect } from 'react';
+
+const AdminPage = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loginLoading, setLoginLoading] = useState(true);
+  const [loginError, setLoginError] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [formData, setFormData] = useState({
+    title: '', desc: '', tech: '', accent: '#4fc1ff', github: '', live: '', featured: false,
+    image: '', longDesc: '', usage: '', howItWorks: ''
+  });
+  const [editingId, setEditingId] = useState(null);
+  const [successMsg, setSuccessMsg] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+
+  // Inbox/Messages States
+  const [activeSubTab, setActiveSubTab] = useState('projects'); // 'projects' or 'inbox'
+  const [messages, setMessages] = useState([]);
+  const [messagesLoading, setMessagesLoading] = useState(false);
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError('File size exceeds 5MB limit.');
+      return;
+    }
+
+    setUploading(true);
+    setUploadError('');
+
+    const token = getToken();
+    const uploadData = new FormData();
+    uploadData.append('image', file);
+
+    try {
+      const res = await fetch('/api/projects/upload', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: uploadData
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setFormData(prev => ({ ...prev, image: data.url }));
+        showSuccess('📸 Image uploaded successfully!');
+      } else {
+        setUploadError(data.message || 'Upload failed');
+      }
+    } catch (err) {
+      setUploadError('Failed to connect to upload server');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // Check existing token on mount
+  useEffect(() => {
+    const token = localStorage.getItem('admin_token');
+    if (token) {
+      fetch('/api/auth/verify', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.valid) {
+            setIsAuthenticated(true);
+            fetchProjects(token);
+            fetchMessages(token);
+          } else {
+            localStorage.removeItem('admin_token');
+          }
+          setLoginLoading(false);
+        })
+        .catch(() => {
+          localStorage.removeItem('admin_token');
+          setLoginLoading(false);
+        });
+    } else {
+      setLoginLoading(false);
+    }
+  }, []);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoginError('');
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.setItem('admin_token', data.token);
+        setIsAuthenticated(true);
+        fetchProjects(data.token);
+        fetchMessages(data.token);
+      } else {
+        setLoginError(data.message || 'Login failed');
+      }
+    } catch (err) {
+      setLoginError('Server unreachable. Please try again.');
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('admin_token');
+    setIsAuthenticated(false);
+    setProjects([]);
+    setMessages([]);
+    setEmail('');
+    setPassword('');
+  };
+
+  const getToken = () => localStorage.getItem('admin_token');
+
+  const fetchProjects = async (token) => {
+    try {
+      const res = await fetch('/api/projects');
+      const data = await res.json();
+      setProjects(Array.isArray(data) ? data : []);
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+    }
+  };
+
+  const fetchMessages = async (token) => {
+    setMessagesLoading(true);
+    try {
+      const activeToken = token || getToken();
+      const res = await fetch('/api/messages', {
+        headers: { 'Authorization': `Bearer ${activeToken}` }
+      });
+      const data = await res.json();
+      setMessages(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Error fetching messages:", err);
+    } finally {
+      setMessagesLoading(false);
+    }
+  };
+
+  const handleDeleteMessage = async (messageId) => {
+    if (!window.confirm("Are you sure you want to delete this message?")) return;
+    try {
+      const token = getToken();
+      const res = await fetch(`/api/messages/${messageId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        showSuccess('📥 Message deleted successfully!');
+        fetchMessages(token);
+      } else {
+        throw new Error('Deletion failed');
+      }
+    } catch (err) {
+      console.error(err);
+      setLoginError('Failed to delete message.');
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthenticated && activeSubTab === 'inbox') {
+      fetchMessages();
+    }
+  }, [activeSubTab, isAuthenticated]);
+
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({ ...formData, [name]: type === 'checkbox' ? checked : value });
+  };
+
+  const showSuccess = (msg) => {
+    setSuccessMsg(msg);
+    setTimeout(() => setSuccessMsg(''), 3000);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const payload = {
+      ...formData,
+      tech: formData.tech.split(',').map(t => t.trim()).filter(Boolean)
+    };
+
+    try {
+      const token = getToken();
+      if (editingId) {
+        const res = await fetch(`/api/projects/${editingId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error('Update failed');
+        showSuccess('✅ Project updated successfully!');
+      } else {
+        const res = await fetch('/api/projects', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error('Create failed');
+        showSuccess('✅ Project created successfully!');
+      }
+      setFormData({ title: '', desc: '', tech: '', accent: '#4fc1ff', github: '', live: '', featured: false, image: '', longDesc: '', usage: '', howItWorks: '' });
+      setEditingId(null);
+      fetchProjects(token);
+    } catch (err) {
+      console.error(err);
+      setLoginError('Action failed. Your session may have expired.');
+    }
+  };
+
+  const handleEdit = (project) => {
+    setFormData({
+      title: project.title,
+      desc: project.desc,
+      tech: project.tech.join(', '),
+      accent: project.accent,
+      github: project.github || '',
+      live: project.live || '',
+      featured: project.featured,
+      image: project.image || '',
+      longDesc: project.longDesc || '',
+      usage: project.usage || '',
+      howItWorks: project.howItWorks || ''
+    });
+    setEditingId(project._id);
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this project?")) return;
+    try {
+      const token = getToken();
+      const res = await fetch(`/api/projects/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('Delete failed');
+      showSuccess('🗑️ Project deleted!');
+      fetchProjects(token);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // ─── Loading state ───
+  if (loginLoading) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--dim)' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div className="loading-spinner" style={{ width: '32px', height: '32px', border: '3px solid var(--border)', borderTopColor: 'var(--blue)', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 12px' }} />
+          <p>Verifying session...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── LOGIN SCREEN ───
+  if (!isAuthenticated) {
+    return (
+      <div className="content-section animate-fade-in" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh' }}>
+        <div style={{
+          width: '100%', maxWidth: '400px', padding: '2.5rem',
+          background: 'var(--bg2)', borderRadius: '12px',
+          border: '1px solid var(--border)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.3)'
+        }}>
+          {/* Lock Icon */}
+          <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+            <div style={{
+              width: '56px', height: '56px', margin: '0 auto 12px',
+              background: 'linear-gradient(135deg, rgba(79,193,255,0.15), rgba(198,134,192,0.15))',
+              borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              border: '1px solid rgba(79,193,255,0.2)'
+            }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </div>
+            <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: 'var(--bright)', margin: '0 0 4px' }}>Admin Access</h2>
+            <p style={{ fontSize: '12px', color: 'var(--dim)', margin: 0 }}>Sign in to manage your portfolio</p>
+          </div>
+
+          {loginError && (
+            <div style={{
+              padding: '10px 14px', marginBottom: '1rem', borderRadius: '6px',
+              background: 'rgba(244,67,54,0.1)', border: '1px solid rgba(244,67,54,0.3)',
+              color: '#f44336', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '8px'
+            }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+              </svg>
+              {loginError}
+            </div>
+          )}
+
+          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div>
+              <label style={{ display: 'block', color: 'var(--dim)', fontSize: '11px', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Email</label>
+              <input
+                type="email" value={email} onChange={e => setEmail(e.target.value)} required
+                placeholder="admin@example.com"
+                style={inputStyle}
+                onFocus={e => e.target.style.borderColor = 'var(--blue)'}
+                onBlur={e => e.target.style.borderColor = 'var(--border)'}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', color: 'var(--dim)', fontSize: '11px', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Password</label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} required
+                  placeholder="••••••••"
+                  style={{ ...inputStyle, paddingRight: '40px' }}
+                  onFocus={e => e.target.style.borderColor = 'var(--blue)'}
+                  onBlur={e => e.target.style.borderColor = 'var(--border)'}
+                />
+                <button type="button" onClick={() => setShowPassword(!showPassword)}
+                  style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--dim)', cursor: 'pointer', padding: '4px' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    {showPassword
+                      ? <><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></>
+                      : <><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></>
+                    }
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <button type="submit" style={{
+              width: '100%', padding: '12px', borderRadius: '8px', border: 'none',
+              background: 'linear-gradient(135deg, var(--blue), #c586c0)',
+              color: 'white', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer',
+              marginTop: '0.5rem', transition: 'opacity 0.2s, transform 0.1s'
+            }}
+              onMouseEnter={e => e.target.style.opacity = '0.9'}
+              onMouseLeave={e => e.target.style.opacity = '1'}
+              onMouseDown={e => e.target.style.transform = 'scale(0.98)'}
+              onMouseUp={e => e.target.style.transform = 'scale(1)'}
+            >
+              Sign In
+            </button>
+          </form>
+
+          <p style={{ textAlign: 'center', color: 'var(--dim)', fontSize: '11px', marginTop: '1.5rem' }}>
+            🔒 Protected admin area
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── ADMIN DASHBOARD ───
+  return (
+    <div className="content-section animate-fade-in" style={{ padding: '2rem' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <div>
+          <h2 style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--bright)', margin: '0 0 4px' }}>
+            ⚙️ Admin Dashboard
+          </h2>
+          <p style={{ color: 'var(--dim)', fontSize: '12px', margin: 0 }}>
+            Manage your portfolio projects. Changes reflect instantly on the live site.
+          </p>
+        </div>
+        <button onClick={handleLogout} style={{
+          padding: '8px 16px', borderRadius: '6px', border: '1px solid rgba(244,67,54,0.3)',
+          background: 'rgba(244,67,54,0.1)', color: '#f44336', fontSize: '12px',
+          cursor: 'pointer', fontWeight: 'bold', transition: 'all 0.2s'
+        }}
+          onMouseEnter={e => { e.target.style.background = 'rgba(244,67,54,0.2)'; }}
+          onMouseLeave={e => { e.target.style.background = 'rgba(244,67,54,0.1)'; }}
+        >
+          Logout
+        </button>
+      </div>
+
+      {/* Tabs */}
+      <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid var(--border)', marginBottom: '1.5rem', paddingBottom: '1px' }}>
+        <button
+          onClick={() => setActiveSubTab('projects')}
+          style={{
+            padding: '8px 16px',
+            background: activeSubTab === 'projects' ? 'var(--bg2)' : 'none',
+            border: '1px solid ' + (activeSubTab === 'projects' ? 'var(--border)' : 'transparent'),
+            borderBottom: activeSubTab === 'projects' ? '2px solid var(--blue)' : '1px solid transparent',
+            color: activeSubTab === 'projects' ? 'var(--bright)' : 'var(--dim)',
+            fontSize: '13px',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            borderRadius: '4px 4px 0 0',
+            transition: 'all 0.15s'
+          }}
+        >
+          📂 Manage Projects
+        </button>
+        <button
+          onClick={() => setActiveSubTab('inbox')}
+          style={{
+            padding: '8px 16px',
+            background: activeSubTab === 'inbox' ? 'var(--bg2)' : 'none',
+            border: '1px solid ' + (activeSubTab === 'inbox' ? 'var(--border)' : 'transparent'),
+            borderBottom: activeSubTab === 'inbox' ? '2px solid var(--blue)' : '1px solid transparent',
+            color: activeSubTab === 'inbox' ? 'var(--bright)' : 'var(--dim)',
+            fontSize: '13px',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            borderRadius: '4px 4px 0 0',
+            transition: 'all 0.15s',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}
+        >
+          📥 Inbox
+          {messages.length > 0 && (
+            <span style={{
+              background: 'var(--red)',
+              color: 'white',
+              fontSize: '10px',
+              fontWeight: '800',
+              padding: '2px 7px',
+              borderRadius: '10px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              {messages.length}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* Success Message */}
+      {successMsg && (
+        <div style={{
+          padding: '10px 16px', marginBottom: '1rem', borderRadius: '6px',
+          background: 'rgba(78,201,176,0.1)', border: '1px solid rgba(78,201,176,0.3)',
+          color: '#4ec9b0', fontSize: '13px'
+        }}>
+          {successMsg}
+        </div>
+      )}
+
+      {activeSubTab === 'projects' ? (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+          {/* Form Section */}
+          <div style={{ background: 'var(--bg2)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--border)' }}>
+            <h3 style={{ color: 'var(--bright)', marginBottom: '1rem', fontSize: '14px' }}>
+              {editingId ? '✏️ Edit Project' : '➕ Add New Project'}
+            </h3>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label style={labelStyle}>Title</label>
+                <input type="text" name="title" value={formData.title} onChange={handleInputChange} required style={inputStyle}
+                  onFocus={e => e.target.style.borderColor = 'var(--blue)'}
+                  onBlur={e => e.target.style.borderColor = 'var(--border)'} />
+              </div>
+              <div>
+                <label style={labelStyle}>Description</label>
+                <textarea name="desc" value={formData.desc} onChange={handleInputChange} required style={{ ...inputStyle, minHeight: '80px', resize: 'vertical' }}
+                  onFocus={e => e.target.style.borderColor = 'var(--blue)'}
+                  onBlur={e => e.target.style.borderColor = 'var(--border)'} />
+              </div>
+              <div>
+                <label style={labelStyle}>Tech Stack (comma separated)</label>
+                <input type="text" name="tech" value={formData.tech} onChange={handleInputChange} style={inputStyle} placeholder="React, Node.js, MongoDB"
+                  onFocus={e => e.target.style.borderColor = 'var(--blue)'}
+                  onBlur={e => e.target.style.borderColor = 'var(--border)'} />
+              </div>
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <div style={{ flex: 1 }}>
+                  <label style={labelStyle}>Accent Color</label>
+                  <input type="color" name="accent" value={formData.accent} onChange={handleInputChange} style={{ width: '100%', height: '36px', cursor: 'pointer', background: 'none', border: '1px solid var(--border)', borderRadius: '4px' }} />
+                </div>
+                <div style={{ flex: 1, display: 'flex', alignItems: 'center', paddingTop: '18px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--bright)', fontSize: '12px', cursor: 'pointer' }}>
+                    <input type="checkbox" name="featured" checked={formData.featured} onChange={handleInputChange} style={{ cursor: 'pointer', width: '15px', height: '15px' }} />
+                    ⭐ Featured Project
+                  </label>
+                </div>
+              </div>
+
+              {/* Image upload dynamic box */}
+              <div>
+                <label style={labelStyle}>Project Cover Image</label>
+                <div
+                  style={{
+                    border: '1px dashed var(--border)',
+                    borderRadius: '6px',
+                    padding: '16px',
+                    textAlign: 'center',
+                    background: 'var(--bg)',
+                    cursor: 'pointer',
+                    position: 'relative',
+                    transition: 'border-color 0.2s',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--blue)'}
+                  onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
+                  onClick={() => document.getElementById('image-upload-input').click()}
+                >
+                  <input id="image-upload-input" type="file" accept="image/*" onChange={handleFileUpload} style={{ display: 'none' }} />
+                  {uploading ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                      <div className="spinner" style={{ width: '20px', height: '20px', border: '2px solid rgba(255,255,255,0.1)', borderTopColor: 'var(--blue)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                      <span style={{ fontSize: '11px', color: 'var(--dim)' }}>Uploading image...</span>
+                    </div>
+                  ) : formData.image ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                      <img src={formData.image} alt="Preview" style={{ maxWidth: '100%', maxHeight: '110px', objectFit: 'contain', borderRadius: '4px', border: '1px solid var(--border)' }} />
+                      <span style={{ fontSize: '11px', color: 'var(--green)' }}>✓ Image ready</span>
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ fontSize: '18px' }}>📸</span>
+                      <span style={{ fontSize: '12px', color: 'var(--dim)' }}>Click to upload image from device</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Optional manual URL entry */}
+                <div style={{ display: 'flex', gap: '6px', marginTop: '10px' }}>
+                  <input type="text" name="image" value={formData.image} onChange={handleInputChange} placeholder="Or enter manual image URL..." style={{ ...inputStyle, flex: 1, fontSize: '11px' }} onClick={e => e.stopPropagation()} />
+                  {formData.image && (
+                    <button type="button" onClick={(e) => { e.stopPropagation(); setFormData(prev => ({ ...prev, image: '' })); }} style={{ padding: '6px 12px', background: 'rgba(244,67,54,0.1)', border: '1px solid rgba(244,67,54,0.2)', color: '#f44336', borderRadius: '4px', cursor: 'pointer', fontSize: '11px' }}>
+                      Remove
+                    </button>
+                  )}
+                </div>
+
+                {uploadError && (
+                  <div style={{ fontSize: '11px', color: 'var(--red)', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    ⚠️ {uploadError}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label style={labelStyle}>GitHub Repo URL</label>
+                <input type="url" name="github" value={formData.github} onChange={handleInputChange} style={inputStyle} placeholder="https://github.com/..."
+                  onFocus={e => e.target.style.borderColor = 'var(--blue)'}
+                  onBlur={e => e.target.style.borderColor = 'var(--border)'} />
+              </div>
+              <div>
+                <label style={labelStyle}>Live Site URL</label>
+                <input type="url" name="live" value={formData.live} onChange={handleInputChange} style={inputStyle} placeholder="https://..."
+                  onFocus={e => e.target.style.borderColor = 'var(--blue)'}
+                  onBlur={e => e.target.style.borderColor = 'var(--border)'} />
+              </div>
+
+              {/* Collapsible detail specifications */}
+              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '12px', marginTop: '4px' }}>
+                <h4 style={{ fontSize: '11px', color: 'var(--bright)', fontWeight: 'bold', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>🖥️ Full Project Specs (For Details Modal)</h4>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div>
+                    <label style={{ ...labelStyle, fontSize: '10px' }}>Detailed Description (longDesc)</label>
+                    <textarea name="longDesc" value={formData.longDesc} onChange={handleInputChange} style={{ ...inputStyle, minHeight: '80px', resize: 'vertical' }} placeholder="Explain the full details of this project, goals achieved, challenges overcome..." />
+                  </div>
+                  
+                  <div>
+                    <label style={{ ...labelStyle, fontSize: '10px' }}>How It Works (howItWorks)</label>
+                    <textarea name="howItWorks" value={formData.howItWorks} onChange={handleInputChange} style={{ ...inputStyle, minHeight: '80px', resize: 'vertical' }} placeholder="Explain how the system works behind the scenes (workflows, database structures, AI engines...)" />
+                  </div>
+
+                  <div>
+                    <label style={{ ...labelStyle, fontSize: '10px' }}>How to Use / Run (usage)</label>
+                    <textarea name="usage" value={formData.usage} onChange={handleInputChange} style={{ ...inputStyle, minHeight: '60px', resize: 'vertical', fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', color: 'var(--yellow)' }} placeholder="e.g. npm install \nnpm run dev" />
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px', marginTop: '0.5rem' }}>
+                <button type="submit" style={btnPrimary}>
+                  {editingId ? 'Update Project' : 'Add Project'}
+                </button>
+                {editingId && (
+                  <button type="button" onClick={() => {
+                    setEditingId(null);
+                    setFormData({ title: '', desc: '', tech: '', accent: '#4fc1ff', github: '', live: '', featured: false, image: '', longDesc: '', usage: '', howItWorks: '' });
+                  }} style={btnSecondary}>
+                    Cancel
+                  </button>
+                )}
+              </div>
+            </form>
+          </div>
+
+          {/* List Section */}
+          <div>
+            <h3 style={{ color: 'var(--bright)', marginBottom: '1rem', fontSize: '14px' }}>
+              📁 Existing Projects ({projects.length})
+            </h3>
+            {loading ? (
+              <div style={{ color: 'var(--dim)', padding: '2rem' }}>Loading projects...</div>
+            ) : projects.length === 0 ? (
+              <div style={{ color: 'var(--dim)', padding: '2rem', textAlign: 'center', background: 'var(--bg2)', borderRadius: '8px', border: '1px solid var(--border)' }}>
+                No projects found. Add one on the left!
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '720px', overflowY: 'auto', paddingRight: '6px' }} className="thin-scroll">
+                {projects.map((p) => (
+                  <div key={p._id} style={{
+                    padding: '14px', borderRadius: '8px', border: '1px solid var(--border)',
+                    background: 'var(--bg)', transition: 'border-color 0.2s'
+                  }}
+                    onMouseEnter={e => e.currentTarget.style.borderColor = p.accent}
+                    onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: p.accent }} />
+                        <h4 style={{ fontWeight: 'bold', color: 'var(--bright)', margin: 0, fontSize: '13px' }}>{p.title}</h4>
+                      </div>
+                      <div style={{ display: 'flex', gap: '4px' }}>
+                        <button onClick={() => handleEdit(p)} style={actionBtn}
+                          onMouseEnter={e => { e.target.style.background = 'rgba(79,193,255,0.15)'; }}
+                          onMouseLeave={e => { e.target.style.background = 'transparent'; }}
+                        >✏️</button>
+                        <button onClick={() => handleDelete(p._id)} style={actionBtn}
+                          onMouseEnter={e => { e.target.style.background = 'rgba(244,67,54,0.15)'; }}
+                          onMouseLeave={e => { e.target.style.background = 'transparent'; }}
+                        >🗑️</button>
+                      </div>
+                    </div>
+                    <p style={{ fontSize: '11px', color: 'var(--text)', margin: '0 0 8px 0', lineHeight: 1.5 }}>
+                      {p.desc.length > 120 ? p.desc.substring(0, 120) + '...' : p.desc}
+                    </p>
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
+                      {p.featured && <span style={{ fontSize: '10px', background: 'rgba(255,215,0,0.15)', color: '#dcdcaa', padding: '2px 8px', borderRadius: '4px', border: '1px solid rgba(255,215,0,0.2)' }}>⭐ Featured</span>}
+                      {p.tech.slice(0, 3).map((t, i) => (
+                        <span key={i} style={{ fontSize: '10px', background: 'rgba(79,193,255,0.1)', color: 'var(--blue)', padding: '2px 8px', borderRadius: '4px' }}>{t}</span>
+                      ))}
+                      {p.tech.length > 3 && <span style={{ fontSize: '10px', color: 'var(--dim)' }}>+{p.tech.length - 3}</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      ) : (
+        /* Inbox tab render content */
+        <div style={{ background: 'var(--bg2)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--border)' }}>
+          <h3 style={{ color: 'var(--bright)', marginBottom: '1.2rem', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            📥 Client Messages ({messages.length})
+          </h3>
+          
+          {messagesLoading ? (
+            <div style={{ color: 'var(--dim)', padding: '3rem', textAlign: 'center' }}>
+              <div className="spinner" style={{ width: '24px', height: '24px', margin: '0 auto 12px', border: '2px solid rgba(255,255,255,0.1)', borderTopColor: 'var(--blue)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+              Loading messages...
+            </div>
+          ) : messages.length === 0 ? (
+            <div style={{ color: 'var(--dim)', padding: '3rem', textAlign: 'center', background: 'var(--bg)', borderRadius: '8px', border: '1px dashed var(--border)' }}>
+              <span style={{ fontSize: '24px', display: 'block', marginBottom: '8px' }}>✉️</span>
+              No messages found. Submissions from your contact page will appear here immediately!
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              {messages.map((msg) => (
+                <div key={msg._id} style={{
+                  padding: '16px',
+                  borderRadius: '8px',
+                  border: '1px solid var(--border)',
+                  background: 'var(--bg)',
+                  position: 'relative'
+                }}>
+                  {/* Delete button top right */}
+                  <button
+                    onClick={() => handleDeleteMessage(msg._id)}
+                    style={{
+                      position: 'absolute',
+                      right: '12px',
+                      top: '12px',
+                      background: 'rgba(244,67,54,0.08)',
+                      border: '1px solid rgba(244,67,54,0.15)',
+                      color: '#f44336',
+                      borderRadius: '4px',
+                      padding: '4px 8px',
+                      cursor: 'pointer',
+                      fontSize: '11px',
+                      fontWeight: 'bold',
+                      transition: 'all 0.15s'
+                    }}
+                    onMouseEnter={e => { e.target.style.background = 'rgba(244,67,54,0.15)'; }}
+                    onMouseLeave={e => { e.target.style.background = 'rgba(244,67,54,0.08)'; }}
+                  >
+                    Delete
+                  </button>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '10px', paddingRight: '60px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: '13px', fontWeight: 'bold', color: 'var(--bright)' }}>{msg.name}</span>
+                      <a href={`mailto:${msg.email}`} style={{ fontSize: '11px', color: 'var(--blue)', textDecoration: 'none' }}>
+                        &lt;{msg.email}&gt;
+                      </a>
+                    </div>
+                    <span style={{ fontSize: '10px', color: 'var(--dim)' }}>
+                      📅 {new Date(msg.createdAt).toLocaleString()}
+                    </span>
+                  </div>
+
+                  <div style={{ borderTop: '1px solid var(--border)', paddingTop: '10px' }}>
+                    <div style={{ fontSize: '11px', color: 'var(--yellow)', fontWeight: 'bold', marginBottom: '6px', fontFamily: 'JetBrains Mono, monospace' }}>
+                      Subject: {msg.subject}
+                    </div>
+                    <p style={{
+                      fontSize: '12px',
+                      color: 'var(--text)',
+                      lineHeight: 1.6,
+                      margin: 0,
+                      whiteSpace: 'pre-wrap',
+                      background: 'var(--bg2)',
+                      padding: '10px',
+                      borderRadius: '4px',
+                      border: '1px solid rgba(255,255,255,0.02)'
+                    }}>
+                      {msg.message}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Inline keyframe for spinner */}
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </div>
+  );
+};
+
+// ─── Shared Styles ───
+const inputStyle = {
+  width: '100%', padding: '10px 12px', borderRadius: '6px',
+  border: '1px solid var(--border)', background: 'var(--bg)',
+  color: 'var(--text)', outline: 'none', fontFamily: 'inherit', fontSize: '13px',
+  transition: 'border-color 0.2s'
+};
+
+const labelStyle = {
+  display: 'block', color: 'var(--dim)', fontSize: '11px',
+  marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px'
+};
+
+const btnPrimary = {
+  flex: 1, padding: '10px', borderRadius: '6px', border: 'none',
+  background: 'linear-gradient(135deg, var(--blue), #c586c0)',
+  color: 'white', fontWeight: 'bold', cursor: 'pointer', fontSize: '13px'
+};
+
+const btnSecondary = {
+  flex: 1, padding: '10px', borderRadius: '6px',
+  border: '1px solid var(--border)', background: 'var(--bg)',
+  color: 'var(--text)', fontWeight: 'bold', cursor: 'pointer', fontSize: '13px'
+};
+
+const actionBtn = {
+  background: 'transparent', border: 'none', cursor: 'pointer',
+  fontSize: '14px', padding: '4px 8px', borderRadius: '4px', transition: 'background 0.2s'
+};
+
+export default AdminPage;

@@ -11,7 +11,7 @@ const THEME_SWATCHES = {
   'gruvbox':     { bg: '#282828', accent: '#fabd2f' },
 };
 
-const TitleBar = ({ theme, setTheme, openPalette, openSettings }) => {
+const TitleBar = ({ theme, setTheme, openPalette, openSettings, openCopilot, copilotOpen }) => {
   const [showThemes, setShowThemes] = React.useState(false);
   const dropRef = useRef(null);
 
@@ -79,8 +79,35 @@ const TitleBar = ({ theme, setTheme, openPalette, openSettings }) => {
         </div>
       </div>
 
-      {/* Right: GitHub link + theme picker */}
+      {/* Right: Copilot + GitHub link + theme picker */}
       <div className="title-bar__right">
+        {/* Copilot button */}
+        <button
+          onClick={openCopilot}
+          className="title-bar__btn"
+          title="Ashik's Copilot (AI Assistant)"
+          style={{
+            gap: '5px',
+            color: copilotOpen ? '#a855f7' : 'var(--dim)',
+            background: copilotOpen ? 'rgba(168,85,247,0.1)' : 'transparent',
+            borderRadius: '4px',
+            border: copilotOpen ? '1px solid rgba(168,85,247,0.25)' : '1px solid transparent',
+            padding: '3px 7px',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.color = '#a855f7'; e.currentTarget.style.background = 'rgba(168,85,247,0.08)'; }}
+          onMouseLeave={e => {
+            e.currentTarget.style.color = copilotOpen ? '#a855f7' : 'var(--dim)';
+            e.currentTarget.style.background = copilotOpen ? 'rgba(168,85,247,0.1)' : 'transparent';
+          }}
+        >
+          <span style={{ fontSize: '12px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+            ✦
+            <span style={{ fontSize: '10px', fontFamily: 'system-ui, sans-serif' }}>Copilot</span>
+          </span>
+        </button>
+
         {/* GitHub */}
         <a
           href="https://github.com/Ashik-Siddike"

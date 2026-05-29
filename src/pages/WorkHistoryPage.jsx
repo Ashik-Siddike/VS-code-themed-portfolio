@@ -2,28 +2,44 @@ import React, { useEffect } from 'react';
 
 const CAREER = [
   {
-    date: '2025 - Present',
+    date: '2025 - PRESENT',
     current: true,
+    badge: 'CURRENT',
+    role: 'Full-Stack Developer',
+    company: 'Nexinity Web Solution',
+    accentColor: '#22c55e',
+    desc: 'Building and shipping full-stack web applications end-to-end — from crafting pixel-perfect UIs with React and Next.js to architecting robust REST APIs with Node.js, Express, and MongoDB. Collaborating on client projects, taking ownership of features, and pushing production-ready code.',
+    tags: ['React.js', 'Next.js', 'Node.js', 'Express.js', 'MongoDB', 'REST APIs', 'Full-Stack']
+  },
+  {
+    date: 'MAY 2025 - CURRENT',
+    current: true,
+    badge: 'REMOTE',
+    role: 'Support Engineer (Web Development & Research)',
+    company: "Dr. Sujit Biswas's Team · City, University of London",
+    accentColor: '#38bdf8',
+    desc: 'Developed and maintained responsive, accessible, and intuitive user interfaces using React JS and Tailwind CSS for educational platforms. Assisted with backend integration tasks including API integrations and Firebase BaaS data handling. Collaborated effectively across international time zones.',
+    tags: ['React.js', 'Tailwind CSS', 'Node.js', 'Express.js', 'Firebase', 'APIs', 'Collaboration']
+  },
+  {
+    date: '2025 - PRESENT',
+    current: true,
+    badge: 'FREELANCE',
     role: 'Lead AI Automation Developer',
-    company: 'Freelance & Indie Projects',
+    company: 'Indie / Freelance Projects',
+    accentColor: '#a855f7',
     desc: 'Designing and building scalable AI web automation systems, affiliate marketing pipelines, and web scrapers. Integrating advanced LLM agents (Google Gemini, OpenAI) and workflows via n8n and Make.com.',
-    tags: ['Python', 'FastAPI', 'Next.js', 'n8n', 'Make.com', 'PostgreSQL', 'Docker', 'Gemini API']
+    tags: ['Python', 'FastAPI', 'n8n', 'Make.com', 'PostgreSQL', 'Docker', 'Gemini API']
   },
   {
-    date: '2024 - 2025',
+    date: '2022 - PRESENT · 3+ Years',
     current: false,
-    role: 'Full-Stack Developer Intern',
-    company: 'Tech Solutions Ltd',
-    desc: 'Developed responsive user interfaces using Next.js and Tailwind CSS. Implemented backend REST APIs in Node.js, managing database interactions through Prisma ORM with PostgreSQL.',
-    tags: ['TypeScript', 'Next.js', 'React', 'Node.js', 'Prisma', 'PostgreSQL', 'Tailwind CSS', 'Git']
-  },
-  {
-    date: '2023 - 2024',
-    current: false,
-    role: 'Web Developer',
-    company: 'IndieLabs Agency',
-    desc: 'Built custom modern landing pages and interface components using vanilla HTML, CSS, and JavaScript. Assisted in SEO optimization, performance audits, and Git repository management.',
-    tags: ['JavaScript', 'HTML5', 'CSS3', 'SEO', 'Responsive Design', 'Bootstrap', 'Git']
+    badge: 'SELF-EMPLOYED',
+    role: 'Freelance Graphic Designer & Web Creator',
+    company: 'International Freelance Platforms',
+    accentColor: '#f97316',
+    desc: 'Delivered 50+ successful client design projects including logos, posters, banners, and digital marketing creatives. High proficiency in Photoshop, Illustrator, and Figma to craft user-centric layouts and social media assets.',
+    tags: ['Photoshop', 'Illustrator', 'Figma', 'UI/UX Design', 'Branding', 'Vector Graphics']
   }
 ];
 
@@ -73,80 +89,113 @@ const WorkHistoryPage = () => {
 
       {/* Vertical Timeline */}
       <div style={{
-        borderLeft: '1px solid var(--border)',
+        borderLeft: '2px solid rgba(255,255,255,0.06)',
         paddingLeft: '6px',
         marginLeft: '4px'
       }}>
         {CAREER.map((item, index) => (
           <div
             key={index}
-            className={`reveal relative pl-6 mb-10 ${item.current ? 'tl-dot' : 'tl-dot-dim'}`}
-            style={{ position: 'relative' }}
+            className="reveal"
+            style={{ position: 'relative', paddingLeft: '28px', marginBottom: '48px' }}
           >
-            {/* Timeline Dot */}
+            {/* Timeline Dot with glow */}
             <span style={{
               position: 'absolute',
-              left: '-10px',
-              top: '8px',
-              width: '9px',
-              height: '9px',
+              left: '-7px',
+              top: '10px',
+              width: '12px',
+              height: '12px',
               borderRadius: '50%',
-              background: item.current ? 'var(--blue)' : 'var(--border)',
-              boxShadow: item.current ? '0 0 10px var(--blue)' : 'none',
+              background: item.accentColor || (item.current ? '#38bdf8' : '#444'),
+              boxShadow: item.current ? `0 0 14px ${item.accentColor || '#38bdf8'}` : 'none',
+              border: `2px solid ${item.current ? item.accentColor || '#38bdf8' : '#333'}`,
               zIndex: 2
             }} />
 
-            {/* Date */}
-            <div style={{
-              fontSize: '13px',
-              color: 'var(--dim)',
-              fontFamily: 'JetBrains Mono, monospace',
-              marginBottom: '4px'
-            }}>
-              {item.date}
+            {/* Date + Badge Row */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px', flexWrap: 'wrap' }}>
+              <span style={{
+                fontSize: '11px',
+                color: 'var(--dim)',
+                fontFamily: 'JetBrains Mono, monospace',
+              }}>
+                {item.date}
+              </span>
+              {item.badge && (
+                <span style={{
+                  fontSize: '9px',
+                  fontWeight: 700,
+                  letterSpacing: '0.12em',
+                  padding: '2px 8px',
+                  borderRadius: '20px',
+                  background: `${item.accentColor || '#38bdf8'}18`,
+                  border: `1px solid ${item.accentColor || '#38bdf8'}44`,
+                  color: item.accentColor || '#38bdf8',
+                  textTransform: 'uppercase',
+                }}>
+                  {item.badge}
+                </span>
+              )}
             </div>
 
             {/* Role */}
             <div style={{
-              fontSize: '20px',
+              fontSize: '21px',
               fontWeight: 800,
               color: 'var(--bright)',
               letterSpacing: '-0.01em',
-              lineHeight: 1.2,
-              marginBottom: '2px'
+              lineHeight: 1.15,
+              marginBottom: '4px'
             }}>
               {item.role}
             </div>
 
-            {/* Company */}
+            {/* Company with accent color */}
             <div style={{
-              fontSize: '14px',
-              color: 'var(--blue)',
-              fontWeight: 500,
-              marginBottom: '10px'
+              fontSize: '13.5px',
+              color: item.accentColor || 'var(--blue)',
+              fontWeight: 600,
+              marginBottom: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
             }}>
-              @ {item.company}
+              <span style={{
+                display: 'inline-block',
+                width: '6px', height: '6px',
+                borderRadius: '50%',
+                background: item.accentColor || 'var(--blue)',
+                flexShrink: 0
+              }} />
+              {item.company}
             </div>
 
             {/* Description */}
             <p style={{
               fontSize: '13.5px',
               color: 'var(--text)',
-              marginBottom: '12px'
+              marginBottom: '14px',
+              lineHeight: 1.75,
+              opacity: 0.85
             }}>
               {item.desc}
             </p>
 
-            {/* Tech tags */}
-            <div className="flex flex-wrap gap-1.5">
+            {/* Tech tags — colored per item */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
               {item.tags.map(tag => (
                 <span
                   key={tag}
-                  className="text-[11px] px-2 py-0.5 rounded-sm border"
                   style={{
-                    background: 'rgba(0, 122, 204, 0.08)',
-                    borderColor: 'rgba(0, 122, 204, 0.25)',
-                    color: 'var(--blue)'
+                    fontSize: '10.5px',
+                    padding: '3px 10px',
+                    borderRadius: '4px',
+                    background: `${item.accentColor || '#38bdf8'}12`,
+                    border: `1px solid ${item.accentColor || '#38bdf8'}30`,
+                    color: item.accentColor || '#38bdf8',
+                    fontFamily: 'JetBrains Mono, monospace',
+                    fontWeight: 500,
                   }}
                 >
                   {tag}
