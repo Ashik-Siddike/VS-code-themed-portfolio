@@ -41,6 +41,23 @@ const BrowserIcon = () => (
   </svg>
 );
 
+const ShellIcon = () => (
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="4 17 10 11 4 5" />
+    <line x1="12" y1="19" x2="20" y2="19" />
+  </svg>
+);
+
+const GitGraphIcon = () => (
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="18" cy="18" r="3" />
+    <circle cx="6" cy="6" r="3" />
+    <circle cx="6" cy="18" r="3" />
+    <path d="M18 18h-6a4 4 0 0 1-4-4V9" />
+    <line x1="6" y1="9" x2="6" y2="15" />
+  </svg>
+);
+
 export const PAGES = [
   { id: 'home',       label: 'home.tsx',        icon: <HomeIcon />, color: '#4fc1ff' },
   { id: 'about',      label: 'about.html',       icon: <HtmlIcon />, color: '#e34c26' },
@@ -52,6 +69,8 @@ export const PAGES = [
   { id: 'blog_automation', label: 'automation_guide.md', icon: <MarkdownIcon />, color: '#519aba', folder: 'blog' },
   { id: 'blog_mern',       label: 'mern_tips.md',       icon: <MarkdownIcon />, color: '#519aba', folder: 'blog' },
   { id: 'github_activity', label: 'github_activity.md', icon: <MarkdownIcon />, color: '#24292e' },
+  { id: 'diagnostics',     label: 'diagnostics.sh',     icon: <ShellIcon />, color: '#4ec9b0' },
+  { id: 'git_graph',       label: 'git_graph.tsx',       icon: <GitGraphIcon />, color: '#ce9178' },
   { id: 'resume',     label: 'Ashik_Siddike_Resume.pdf', icon: <PdfIcon />, color: '#f44336', download: true },
   { id: 'browser',    label: 'Simple Browser',   icon: <BrowserIcon />, color: '#34d399', hidden: true },
 ];

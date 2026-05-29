@@ -24,6 +24,8 @@ import AdminPage     from './pages/AdminPage';
 import BrowserPage   from './pages/BrowserPage';
 import BlogPage      from './pages/BlogPage';
 import GithubActivityPage from './pages/GithubActivityPage';
+import DiagnosticsPage from './pages/DiagnosticsPage';
+import GitGraphPage    from './pages/GitGraphPage';
 
 import { PAGES } from './constants';
 
@@ -38,6 +40,8 @@ const BREADCRUMBS = {
   blog_automation: ['portfolio', 'src', 'blog', 'automation_guide.md'],
   blog_mern:       ['portfolio', 'src', 'blog', 'mern_tips.md'],
   github_activity: ['portfolio', 'src', 'github_activity.md'],
+  diagnostics:     ['portfolio', 'src', 'diagnostics.sh'],
+  git_graph:       ['portfolio', 'src', 'git_graph.tsx'],
   admin:           ['portfolio', 'src', 'admin.jsx'],
   browser:         ['portfolio', 'src', 'browser.tsx'],
 };
@@ -49,6 +53,8 @@ const PAGE_COMPONENTS = {
   blog_automation: BlogPage,
   blog_mern: BlogPage,
   github_activity: GithubActivityPage,
+  diagnostics: DiagnosticsPage,
+  git_graph: GitGraphPage,
 };
 
 function App() {
