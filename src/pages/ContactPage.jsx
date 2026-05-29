@@ -141,13 +141,22 @@ const ContactPage = () => {
     setLoading(true);
     setErrorMsg('');
     try {
-      const res = await fetch('/api/messages', {
+      const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          access_key: "b0a68956-430e-402b-993a-f869ecef33c1",
+          name: form.name,
+          email: form.email,
+          subject: form.subject,
+          message: form.message
+        })
       });
       const data = await res.json();
-      if (res.ok) {
+      if (data.success) {
         setSent(true);
       } else {
         setErrorMsg(data.message || 'Failed to send message');
