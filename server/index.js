@@ -22,9 +22,11 @@ mongoose.connect(MONGO_URI)
 const authRoutes = require('./routes/authRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const messageRoutes = require('./routes/messageRoutes');
+const copilotRoutes = require('./routes/copilotRoutes');
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/copilot', copilotRoutes);
 
 app.get('/', (req, res) => {
   res.send('API is running');

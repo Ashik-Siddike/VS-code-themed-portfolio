@@ -41,32 +41,49 @@ const Terminal = ({ activePage, setActivePage, onClose, showToast, activeTab, se
     }
   }, [activeTab]);
 
-  const handleSendChatMessage = (text) => {
+  const getFallbackChatMessage = (trimmed) => {
+    const q = trimmed.toLowerCase();
+    if (q.includes('skill') || q.includes('stack') || q.includes('tech') || q.includes('languages') || q.includes('learn')) {
+      return "Ashik is highly skilled in: Python (FastAPI, web scraping), TypeScript, JavaScript, Next.js, React, n8n, Make.com, PostgreSQL, MongoDB, and Gemini/OpenAI API integrations. He loves building intelligent automation pipelines and scalable SaaS solutions!";
+    } else if (q.includes('project') || q.includes('build') || q.includes('repo') || q.includes('work')) {
+      return "Ashik has built several noteworthy projects:\n\n✦ **Affiliate Automation System** (Python, Gemini AI, n8n)\n✦ **Affiliate Automation Next.js Site** (TypeScript, Next.js, Vercel)\n✦ **SaaS Dashboard** (Next.js, TypeScript)\n✦ **Aronnyo — Kids Learning Platform** (TypeScript, Next.js)\n✦ **Play Learn Grow Kids (247School)** (React, Next.js)\n✦ **Social Media Growing Agent** (Python, n8n)\n\nYou can click on these files in the file explorer to view details!";
+    } else if (q.includes('experience') || q.includes('job') || q.includes('career') || q.includes('history')) {
+      return "Ashik's professional journey:\n\n🟢 **Full-Stack Developer** @ Nexinity Web Solution (2025 – Present)\n🔵 **Support Engineer** @ Dr. Sujit Biswas's Team, City, University of London (May 2025 – Present · Remote)\n🟣 **Lead AI Automation Developer** (2025 – Present)\n🟠 **Freelance Graphic Designer** (2022 – Present · 3+ Years)";
+    } else if (q.includes('contact') || q.includes('email') || q.includes('hire') || q.includes('facebook') || q.includes('linkedin')) {
+      return "You can contact Ashik via:\n\n✉️ Email: ashiksiddike@gmail.com\n🔗 GitHub: github.com/Ashik-Siddike\n🔗 LinkedIn: linkedin.com/in/ashik-siddike\n\nHe is currently open to new work and freelance collaborations!";
+    }
+    return "Interesting question! Ashik is a passionate full-stack developer who loves combining AI APIs and modern web frameworks to create automation systems. You can check his homepage (home.tsx) or read his README.md for more info!";
+  };
+
+  const handleSendChatMessage = async (text) => {
     const trimmed = text.trim();
     if (!trimmed) return;
 
     // 1. Add user message
-    setChatMessages(prev => [...prev, { sender: 'user', text: trimmed }]);
+    const updatedMessages = [...chatMessages, { sender: 'user', text: trimmed }];
+    setChatMessages(updatedMessages);
 
-    // 2. Generate response
-    let response = '';
-    const q = trimmed.toLowerCase();
+    // Format chat messages into Gemini API input structure
+    const apiMessages = updatedMessages.map(m => ({
+      role: m.sender === 'user' ? 'user' : 'assistant',
+      text: m.text
+    }));
 
-    if (q.includes('skill') || q.includes('stack') || q.includes('tech') || q.includes('languages') || q.includes('learn')) {
-      response = "Ashik is highly skilled in: Python (FastAPI, web scraping), TypeScript, JavaScript, Next.js, React, n8n, Make.com, PostgreSQL, MongoDB, and Gemini/OpenAI API integrations. He loves building intelligent automation pipelines and scalable SaaS solutions!";
-    } else if (q.includes('project') || q.includes('build') || q.includes('repo') || q.includes('work')) {
-      response = "Ashik has built several noteworthy projects:\n\n✦ **Affiliate Automation System** (Python, Gemini AI, n8n)\n✦ **Affiliate Automation Next.js Site** (TypeScript, Next.js, Vercel)\n✦ **SaaS Dashboard** (Next.js, TypeScript)\n✦ **Aronnyo — Kids Learning Platform** (TypeScript, Next.js)\n✦ **Play Learn Grow Kids (247School)** (React, Next.js)\n✦ **Social Media Growing Agent** (Python, n8n)\n\nYou can click on these files in the file explorer to view details!";
-    } else if (q.includes('experience') || q.includes('job') || q.includes('career') || q.includes('history')) {
-      response = "Ashik's professional experience includes:\n\n1. **Lead AI Automation Developer** (Freelance & Indie, 2025 - Present) — building scalable LLM tools, web scrapers, and marketing automation pipelines.\n2. **Full-Stack Developer Intern** (Tech Solutions, 2024 - 2025) — Next.js, Tailwind CSS, Prisma, Node.js.\n3. **Web Developer** (IndieLabs Agency, 2023 - 2024) — vanilla HTML/CSS/JS interfaces and SEO optimization.";
-    } else if (q.includes('contact') || q.includes('email') || q.includes('hire') || q.includes('facebook') || q.includes('linkedin')) {
-      response = "You can contact Ashik via:\n\n✉️ Email: ashiksiddike@gmail.com\n🔗 GitHub: github.com/Ashik-Siddike\n🔗 LinkedIn: linkedin.com/in/ashik-siddike\n\nHe is currently open to new work and freelance collaborations!";
-    } else {
-      response = "Interesting question! Ashik is a passionate full-stack developer who loves combining AI APIs and modern web frameworks to create automation systems. You can check his homepage (home.tsx) or read his README.md for more info!";
+    try {
+      const res = await fetch('/api/copilot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: apiMessages })
+      });
+      const data = await res.json();
+      if (data.success && data.reply) {
+        setChatMessages(prev => [...prev, { sender: 'ai', text: data.reply }]);
+      } else {
+        setChatMessages(prev => [...prev, { sender: 'ai', text: getFallbackChatMessage(trimmed) }]);
+      }
+    } catch (err) {
+      setChatMessages(prev => [...prev, { sender: 'ai', text: getFallbackChatMessage(trimmed) }]);
     }
-
-    setTimeout(() => {
-      setChatMessages(prev => [...prev, { sender: 'ai', text: response }]);
-    }, 400);
   };
 
   const handleCommand = (cmdStr) => {

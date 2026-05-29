@@ -130,16 +130,33 @@ const CopilotPanel = ({ open, onClose }) => {
     if (open) setTimeout(() => inputRef.current?.focus(), 200);
   }, [open]);
 
-  const send = (text) => {
-    if (!text.trim()) return;
-    setMessages(prev => [...prev, { role: 'user', text: text.trim() }]);
+  const send = async (text) => {
+    const userText = text.trim();
+    if (!userText) return;
+
+    const newMessages = [...messages, { role: 'user', text: userText }];
+    setMessages(newMessages);
     setInput('');
     setShowQuick(false);
     setTyping(true);
-    setTimeout(() => {
+
+    try {
+      const res = await fetch('/api/copilot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: newMessages })
+      });
+      const data = await res.json();
       setTyping(false);
-      setMessages(prev => [...prev, { role: 'assistant', text: getAnswer(text) }]);
-    }, 700 + Math.random() * 600);
+      if (data.success && data.reply) {
+        setMessages(prev => [...prev, { role: 'assistant', text: data.reply }]);
+      } else {
+        setMessages(prev => [...prev, { role: 'assistant', text: getAnswer(userText) }]);
+      }
+    } catch (err) {
+      setTyping(false);
+      setMessages(prev => [...prev, { role: 'assistant', text: getAnswer(userText) }]);
+    }
   };
 
   return (
