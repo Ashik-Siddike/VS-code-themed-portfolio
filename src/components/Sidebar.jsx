@@ -18,7 +18,7 @@ const GitBranchIcon = () => (
 
 const Sidebar = ({ activePage, setActivePage, openTabs = [], sidebarOpen = true, openCopilotChat, activityActive = 'explorer' }) => {
   const [open, setOpen] = React.useState({ PORTFOLIO: true, 'OPEN EDITORS': false, OUTLINE: false });
-  const [blogFolderOpen, setBlogFolderOpen] = React.useState(true);
+  const [blogFolderOpen, setBlogFolderOpen] = React.useState(false);
 
   const openFiles = PAGES.filter(p => openTabs.includes(p.id) && !p.download);
 
