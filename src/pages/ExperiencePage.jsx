@@ -127,14 +127,7 @@ const ExperiencePage = () => {
         </div>
       </div>
 
-      {/* 2-column grid of skill groups */}
-      <div className="reveal" style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-        gap: '28px',
-        marginTop: '28px',
-        marginBottom: '36px',
-      }}>
+      <div className="reveal skills-groups-grid">
         {SKILL_GROUPS.map(({ title, skills }) => (
           <div key={title}>
             <div style={{

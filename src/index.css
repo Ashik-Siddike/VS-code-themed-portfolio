@@ -594,6 +594,23 @@ a { color: inherit; text-decoration: none; }
 .project-card:hover { border-color: rgba(255,255,255,0.14); }
 .project-card:hover::before { transform: scaleX(1); }
 
+/* ===== RESPONSIVE GRID UTILITIES ===== */
+.about-build-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+.projects-others-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+.skills-groups-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 28px;
+}
+
 /* ===== TIMELINE ===== */
 .timeline-item {
   position: relative;
@@ -764,25 +781,67 @@ a { color: inherit; text-decoration: none; }
 
 @media (max-width: 767px) {
   .app-grid {
-    display: flex;
-    flex-direction: column;
+    display: grid !important;
+    grid-template-rows: 30px 22px 1fr 22px !important;
+    grid-template-columns: 48px 1fr !important;
+    grid-template-areas:
+      "title  title"
+      "menu   menu"
+      "act    editor"
+      "status status" !important;
     width: 100vw;
     height: 100vh;
     overflow: hidden;
   }
-  .title-bar { flex: 0 0 30px; }
-  .menu-bar { flex: 0 0 22px; }
-  .editor-area { flex: 1; overflow: hidden; }
-  .activity-bar, .sidebar, .status-bar { display: none; }
+  .title-bar { grid-area: title; }
+  .menu-bar { grid-area: menu; }
+  .activity-bar {
+    display: flex !important;
+    grid-area: act;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+  }
+  .status-bar {
+    display: flex !important;
+    grid-area: status;
+  }
+  .sidebar {
+    position: absolute;
+    top: 52px;
+    bottom: 22px;
+    left: 48px;
+    width: 220px;
+    z-index: 100;
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.4);
+    border-right: 1px solid var(--border);
+  }
+  .editor-area {
+    grid-area: editor;
+    width: 100%;
+    min-width: 0;
+  }
   .home-wrapper {
     flex-direction: column;
     align-items: flex-start;
     padding: 1.25rem 1rem 2rem;
     gap: 1rem;
+    overflow-y: auto;
   }
   .home-avatar { align-self: center; }
-  .avatar-ring { width: 100px; height: 100px; }
-  .content-section { padding: 1.5rem 1rem; }
+  .avatar-ring { width: 120px; height: 120px; }
+  .content-section { padding: 1.25rem 1rem; }
+
+  /* Grid Adapters */
+  .about-build-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .projects-others-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .skills-groups-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
 }
 
 @media (max-width: 380px) {

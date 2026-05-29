@@ -157,7 +157,7 @@ const ProjectsPage = () => {
         <span style={{ color: 'var(--pink)' }}>#</span> Other Noteworthy Projects
       </h2>
       <p className="reveal" style={{ color: 'var(--dim)', fontSize: '12px', marginBottom: '20px' }}>More of my live projects on GitHub</p>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '14px' }}>
+      <div className="projects-others-grid">
         {others.map(p => (
           <div key={p.title} className="reveal project-card" style={{ '--card-accent': p.accent, display: 'flex', flexDirection: 'column', height: '100%', padding: '18px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>

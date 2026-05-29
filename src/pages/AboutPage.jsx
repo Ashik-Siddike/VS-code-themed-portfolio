@@ -130,7 +130,7 @@ const AboutPage = () => {
         <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--bright)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{ color: 'var(--pink)' }}>#</span> What I Build
         </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '14px', maxWidth: '760px' }}>
+        <div className="about-build-grid" style={{ maxWidth: '760px' }}>
           {[
             { icon: '🤖', title: 'AI Automation', desc: 'Python bots, n8n workflows, affiliate marketing automation' },
             { icon: '⚡', title: 'Full-Stack Apps', desc: 'Next.js + TypeScript SaaS products deployed on Vercel' },

@@ -90,6 +90,9 @@ function App() {
     setActivePage(pageId);
     setPageKey(k => k + 1);
     setOpenTabs(prev => prev.includes(pageId) ? prev : [...prev, pageId]);
+    if (window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
   }, []);
 
   /* ── Close tab ── */
@@ -205,7 +208,11 @@ function App() {
       />
 
       {/* Editor Area */}
-      <div className="editor-area">
+      <div className="editor-area" onClick={() => {
+        if (window.innerWidth < 768 && sidebarOpen) {
+          setSidebarOpen(false);
+        }
+      }}>
         <TabBar
           activePage={activePage}
           setActivePage={navigate}
