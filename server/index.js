@@ -14,9 +14,40 @@ app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/portfolio_db';
 
-mongoose.connect(MONGO_URI)
-  .then(() => console.log('MongoDB connected to portfolio_db'))
-  .catch(err => console.error('MongoDB connection error:', err));
+// Cached connection promise
+let cachedConnection = null;
+
+const connectDB = async () => {
+  if (mongoose.connection.readyState >= 1) {
+    return mongoose.connection;
+  }
+  if (!cachedConnection) {
+    console.log('Connecting to database...');
+    cachedConnection = mongoose.connect(MONGO_URI)
+      .then(conn => {
+        console.log('MongoDB connected to portfolio_db');
+        return conn;
+      })
+      .catch(err => {
+        console.error('MongoDB connection error:', err);
+        cachedConnection = null;
+        throw err;
+      });
+  }
+  return cachedConnection;
+};
+
+// Middleware to ensure DB connection on serverless functions
+app.use(async (req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    try {
+      await connectDB();
+    } catch (err) {
+      console.error('DB connection middleware error:', err.message);
+    }
+  }
+  next();
+});
 
 // Routes
 const authRoutes = require('./routes/authRoutes');
