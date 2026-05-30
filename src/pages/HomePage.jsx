@@ -208,7 +208,7 @@ const HomePage = ({ setActivePage }) => {
         {/* Current company badge */}
         <div className="animate-su-7" style={{ marginTop: '18px', display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 14px', borderRadius: '20px', background: 'rgba(34,197,94,0.06)', border: '1px solid rgba(34,197,94,0.2)' }}>
           <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#22c55e', display: 'inline-block', boxShadow: '0 0 8px #22c55e' }} />
-          <span style={{ fontSize: '11px', color: '#22c55e', fontWeight: 500 }}>Currently @ Nexinity Web Solution · Magura, Bangladesh</span>
+          <span style={{ fontSize: '11px', color: '#22c55e', fontWeight: 500 }}>Currently @ Nexinity Web Solution</span>
         </div>
       </div>
     </div>

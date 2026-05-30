@@ -54,7 +54,7 @@ const ReadmePage = () => {
       </h1>
 
       <p style={{ fontSize: '14px', color: 'var(--dim)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '20px' }}>
-        Full-Stack Developer & AI Automation Builder · Magura, Bangladesh
+        Full-Stack Developer & AI Automation Builder
       </p>
 
       {/* Badges */}
