@@ -30,6 +30,15 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/copilot', copilotRoutes);
 app.use('/api/guestbook', guestbookRoutes);
 
+app.get('/api/health', (req, res) => {
+  const dbStatus = mongoose.connection.readyState === 1 ? 'SHARD HEALTHY' : 'OFFLINE';
+  res.json({
+    status: 'ONLINE',
+    database: dbStatus,
+    nodeVersion: process.version
+  });
+});
+
 app.get('/', (req, res) => {
   res.send('API is running');
 });
