@@ -97,13 +97,13 @@ const WorkHistoryPage = () => {
           <div
             key={index}
             className="reveal"
-            style={{ position: 'relative', paddingLeft: '28px', marginBottom: '48px' }}
+            style={{ position: 'relative', paddingLeft: '28px', marginBottom: '32px' }}
           >
             {/* Timeline Dot with glow */}
             <span style={{
               position: 'absolute',
               left: '-7px',
-              top: '10px',
+              top: '22px',
               width: '12px',
               height: '12px',
               borderRadius: '50%',
@@ -113,94 +113,102 @@ const WorkHistoryPage = () => {
               zIndex: 2
             }} />
 
-            {/* Date + Badge Row */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px', flexWrap: 'wrap' }}>
-              <span style={{
-                fontSize: '11px',
-                color: 'var(--dim)',
-                fontFamily: 'JetBrains Mono, monospace',
-              }}>
-                {item.date}
-              </span>
-              {item.badge && (
+            {/* Career Card */}
+            <div className="glass-panel tilt-card" style={{
+              '--card-accent': item.accentColor,
+              padding: '20px',
+              borderRadius: '10px',
+              transition: 'all 0.3s ease'
+            }}>
+              {/* Date + Badge Row */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px', flexWrap: 'wrap' }}>
                 <span style={{
-                  fontSize: '9px',
-                  fontWeight: 700,
-                  letterSpacing: '0.12em',
-                  padding: '2px 8px',
-                  borderRadius: '20px',
-                  background: `${item.accentColor || '#38bdf8'}18`,
-                  border: `1px solid ${item.accentColor || '#38bdf8'}44`,
-                  color: item.accentColor || '#38bdf8',
-                  textTransform: 'uppercase',
+                  fontSize: '11px',
+                  color: 'var(--dim)',
+                  fontFamily: 'JetBrains Mono, monospace',
                 }}>
-                  {item.badge}
+                  {item.date}
                 </span>
-              )}
-            </div>
-
-            {/* Role */}
-            <div style={{
-              fontSize: '21px',
-              fontWeight: 800,
-              color: 'var(--bright)',
-              letterSpacing: '-0.01em',
-              lineHeight: 1.15,
-              marginBottom: '4px'
-            }}>
-              {item.role}
-            </div>
-
-            {/* Company with accent color */}
-            <div style={{
-              fontSize: '13.5px',
-              color: item.accentColor || 'var(--blue)',
-              fontWeight: 600,
-              marginBottom: '12px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-            }}>
-              <span style={{
-                display: 'inline-block',
-                width: '6px', height: '6px',
-                borderRadius: '50%',
-                background: item.accentColor || 'var(--blue)',
-                flexShrink: 0
-              }} />
-              {item.company}
-            </div>
-
-            {/* Description */}
-            <p style={{
-              fontSize: '13.5px',
-              color: 'var(--text)',
-              marginBottom: '14px',
-              lineHeight: 1.75,
-              opacity: 0.85
-            }}>
-              {item.desc}
-            </p>
-
-            {/* Tech tags — colored per item */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-              {item.tags.map(tag => (
-                <span
-                  key={tag}
-                  style={{
-                    fontSize: '10.5px',
-                    padding: '3px 10px',
-                    borderRadius: '4px',
-                    background: `${item.accentColor || '#38bdf8'}12`,
-                    border: `1px solid ${item.accentColor || '#38bdf8'}30`,
+                {item.badge && (
+                  <span style={{
+                    fontSize: '9px',
+                    fontWeight: 700,
+                    letterSpacing: '0.12em',
+                    padding: '2px 8px',
+                    borderRadius: '20px',
+                    background: `${item.accentColor || '#38bdf8'}18`,
+                    border: `1px solid ${item.accentColor || '#38bdf8'}44`,
                     color: item.accentColor || '#38bdf8',
-                    fontFamily: 'JetBrains Mono, monospace',
-                    fontWeight: 500,
-                  }}
-                >
-                  {tag}
-                </span>
-              ))}
+                    textTransform: 'uppercase',
+                  }}>
+                    {item.badge}
+                  </span>
+                )}
+              </div>
+
+              {/* Role */}
+              <div style={{
+                fontSize: '21px',
+                fontWeight: 800,
+                color: 'var(--bright)',
+                letterSpacing: '-0.01em',
+                lineHeight: 1.15,
+                marginBottom: '4px'
+              }}>
+                {item.role}
+              </div>
+
+              {/* Company with accent color */}
+              <div style={{
+                fontSize: '13.5px',
+                color: item.accentColor || 'var(--blue)',
+                fontWeight: 600,
+                marginBottom: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+              }}>
+                <span style={{
+                  display: 'inline-block',
+                  width: '6px', height: '6px',
+                  borderRadius: '50%',
+                  background: item.accentColor || 'var(--blue)',
+                  flexShrink: 0
+                }} />
+                {item.company}
+              </div>
+
+              {/* Description */}
+              <p style={{
+                fontSize: '13.5px',
+                color: 'var(--text)',
+                marginBottom: '16px',
+                lineHeight: 1.75,
+                opacity: 0.85
+              }}>
+                {item.desc}
+              </p>
+
+              {/* Tech tags — colored per item */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                {item.tags.map(tag => (
+                  <span
+                    key={tag}
+                    style={{
+                      fontSize: '10.5px',
+                      padding: '3px 10px',
+                      borderRadius: '4px',
+                      background: `${item.accentColor || '#38bdf8'}12`,
+                      border: `1px solid ${item.accentColor || '#38bdf8'}30`,
+                      color: item.accentColor || '#38bdf8',
+                      fontFamily: 'JetBrains Mono, monospace',
+                      fontWeight: 500,
+                    }}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         ))}

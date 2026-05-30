@@ -130,7 +130,7 @@ const ProjectsPage = ({ openInSimpleBrowser }) => {
   const [loading, setLoading] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedTag, setSelectedTag] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
   useEffect(() => {
     fetch('/api/projects')
@@ -145,18 +145,22 @@ const ProjectsPage = ({ openInSimpleBrowser }) => {
       });
   }, []);
 
-  // Get all unique tags dynamically
-  const allTags = ['All', ...new Set(projects.flatMap(p => p.tech || []))];
-
-  // Filter projects based on search query and selected tag
+  // Filter projects based on search query and selected category
   const filteredProjects = projects.filter(p => {
     const matchesSearch = p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.desc.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.tech.some(t => t.toLowerCase().includes(searchTerm.toLowerCase()));
       
-    const matchesTag = selectedTag === 'All' || p.tech.includes(selectedTag);
+    let matchesCategory = true;
+    if (selectedCategory === 'Full Stack') {
+      matchesCategory = p.tech.some(t => ['Next.js', 'React', 'TypeScript', 'Node.js', 'HTML/CSS', 'Tailwind CSS'].includes(t));
+    } else if (selectedCategory === 'AI & Automation') {
+      matchesCategory = p.tech.some(t => ['Gemini AI', 'n8n', 'Make.com', 'AI APIs', 'Automation'].includes(t));
+    } else if (selectedCategory === 'Python Scripts') {
+      matchesCategory = p.tech.some(t => ['Python'].includes(t));
+    }
     
-    return matchesSearch && matchesTag;
+    return matchesSearch && matchesCategory;
   });
 
   useEffect(() => {
@@ -227,37 +231,38 @@ const ProjectsPage = ({ openInSimpleBrowser }) => {
           )}
         </div>
 
-        {/* Tag Filters */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', paddingBottom: '4px' }}>
-          {allTags.map(tag => (
+        {/* Category Filters */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', paddingBottom: '4px' }}>
+          {['All', 'Full Stack', 'AI & Automation', 'Python Scripts'].map(cat => (
             <button
-              key={tag}
-              onClick={() => setSelectedTag(tag)}
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
               style={{
                 fontSize: '11px',
                 fontFamily: 'JetBrains Mono, monospace',
-                background: selectedTag === tag ? 'rgba(79,193,255,0.15)' : 'rgba(255,255,255,0.02)',
-                color: selectedTag === tag ? 'var(--blue)' : 'var(--dim)',
-                border: '1px solid ' + (selectedTag === tag ? 'rgba(79,193,255,0.3)' : 'rgba(255,255,255,0.05)'),
-                padding: '4px 12px',
-                borderRadius: '4px',
+                background: selectedCategory === cat ? 'rgba(79,193,255,0.15)' : 'rgba(255,255,255,0.02)',
+                color: selectedCategory === cat ? 'var(--blue)' : 'var(--dim)',
+                border: '1px solid ' + (selectedCategory === cat ? 'rgba(79,193,255,0.3)' : 'rgba(255,255,255,0.05)'),
+                padding: '6px 14px',
+                borderRadius: '6px',
                 cursor: 'pointer',
-                transition: 'all 0.15s'
+                transition: 'all 0.2s',
+                fontWeight: selectedCategory === cat ? 'bold' : 'normal'
               }}
               onMouseEnter={e => {
-                if (selectedTag !== tag) {
-                  e.currentTarget.style.borderColor = 'rgba(79,193,255,0.15)';
+                if (selectedCategory !== cat) {
+                  e.currentTarget.style.borderColor = 'rgba(79,193,255,0.2)';
                   e.currentTarget.style.color = 'var(--bright)';
                 }
               }}
               onMouseLeave={e => {
-                if (selectedTag !== tag) {
+                if (selectedCategory !== cat) {
                   e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)';
                   e.currentTarget.style.color = 'var(--dim)';
                 }
               }}
             >
-              {tag}
+              {cat}
             </button>
           ))}
         </div>
@@ -274,7 +279,7 @@ const ProjectsPage = ({ openInSimpleBrowser }) => {
       {featured.length > 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '48px' }}>
           {featured.map((p) => (
-            <div key={p._id || p.title} className="reveal project-card project-featured-card" style={{ '--card-accent': p.accent, cursor: 'pointer' }} onClick={() => setSelectedProject(p)}>
+            <div key={p._id || p.title} className="reveal project-card project-featured-card glass-panel tilt-card" style={{ '--card-accent': p.accent, cursor: 'pointer' }} onClick={() => setSelectedProject(p)}>
               {p.image ? (
                 <div className="project-featured-img-container">
                   <img src={p.image} alt={p.title} className="project-card-img" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -329,7 +334,7 @@ const ProjectsPage = ({ openInSimpleBrowser }) => {
           <p className="reveal" style={{ color: 'var(--dim)', fontSize: '12px', marginBottom: '20px' }}>More of my live projects on GitHub</p>
           <div className="projects-others-grid">
             {others.map(p => (
-              <div key={p._id || p.title} className="reveal project-card project-other-card" style={{ '--card-accent': p.accent, display: 'flex', flexDirection: 'column', height: '100%', padding: '18px', cursor: 'pointer' }} onClick={() => setSelectedProject(p)}>
+              <div key={p._id || p.title} className="reveal project-card project-other-card glass-panel tilt-card" style={{ '--card-accent': p.accent, display: 'flex', flexDirection: 'column', height: '100%', padding: '18px', cursor: 'pointer' }} onClick={() => setSelectedProject(p)}>
                 {p.image ? (
                   <div style={{ width: '100%', height: '140px', overflow: 'hidden', borderRadius: '4px', marginBottom: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
                     <img src={p.image} alt={p.title} className="project-card-img" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -518,15 +523,19 @@ const ProjectsPage = ({ openInSimpleBrowser }) => {
 
       {/* Styled styles block */}
       <style>{`
+        .project-card {
+          transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease !important;
+        }
+        .project-card:hover {
+          transform: translateY(-5px) scale(1.01) !important;
+          border-color: var(--card-accent) !important;
+          box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.7), 0 0 18px -4px var(--card-accent) !important;
+        }
         .project-featured-card {
           display: flex;
           flex-direction: row;
           gap: 24px;
           align-items: stretch;
-          transition: border-color 0.2s, transform 0.2s;
-        }
-        .project-featured-card:hover {
-          transform: translateY(-2px);
         }
         .project-featured-img-container {
           width: 280px;
@@ -543,10 +552,9 @@ const ProjectsPage = ({ openInSimpleBrowser }) => {
           transform: scale(1.06);
         }
         .project-other-card {
-          transition: border-color 0.2s, transform 0.2s;
-        }
-        .project-other-card:hover {
-          transform: translateY(-2px);
+          display: flex;
+          flex-direction: column;
+          height: 100%;
         }
         .close-modal-btn {
           transition: color 0.2s, background-color 0.2s;

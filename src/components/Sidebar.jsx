@@ -68,6 +68,24 @@ const Sidebar = ({ activePage, setActivePage, openTabs = [], sidebarOpen = true,
           {page.icon}
         </span>
         <span className="truncate" style={{ flex: 1 }}>{page.label}</span>
+        {page.id === 'diagnostics' && (
+          <span style={{ 
+            color: 'var(--yellow)', 
+            fontSize: '10px', 
+            fontWeight: 800, 
+            marginRight: '8px', 
+            opacity: 0.9 
+          }} title="Modified">M</span>
+        )}
+        {page.id === 'git_graph' && (
+          <span style={{ 
+            color: 'var(--green)', 
+            fontSize: '10px', 
+            fontWeight: 800, 
+            marginRight: '8px', 
+            opacity: 0.9 
+          }} title="Untracked">U</span>
+        )}
         {isDownload && (
           <span className="download-arrow-indicator" style={{ fontSize: '11px', transition: 'opacity 0.15s' }}>↓</span>
         )}

@@ -163,20 +163,39 @@ const GitGraphPage = ({ setActivePage }) => {
   const renderGitPaths = () => {
     return (
       <svg style={{ width: '110px', height: `${COMMITS_DATA.length * rowHeight}px`, overflow: 'visible' }}>
+        <defs>
+          <linearGradient id="mainGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="var(--blue)" />
+            <stop offset="50%" stopColor="var(--purple)" />
+            <stop offset="100%" stopColor="var(--pink)" />
+          </linearGradient>
+          <linearGradient id="yellowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="var(--blue)" />
+            <stop offset="100%" stopColor="var(--yellow)" />
+          </linearGradient>
+          <linearGradient id="pinkGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="var(--blue)" />
+            <stop offset="100%" stopColor="var(--pink)" />
+          </linearGradient>
+          
+          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="1.5" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
+
         {/* Main Line path */}
-        <line x1={mainColX} y1={rowHeight / 2} x2={mainColX} y2={(COMMITS_DATA.length - 0.5) * rowHeight} stroke="var(--blue)" strokeWidth="2.5" />
+        <line x1={mainColX} y1={rowHeight / 2} x2={mainColX} y2={(COMMITS_DATA.length - 0.5) * rowHeight} stroke="url(#mainGradient)" strokeWidth="3" filter="url(#glow)" />
         
         {/* Branch Lines: Feature Guestbook */}
-        {/* Starts from row index 4 (5d92e1f) and splits to index 5 (9f2a08c) and returns */}
-        <path d={`M ${mainColX} ${4.5 * rowHeight} C ${mainColX} ${4.8 * rowHeight}, ${branchColX} ${4.8 * rowHeight}, ${branchColX} ${5.5 * rowHeight}`} fill="none" stroke="var(--yellow)" strokeWidth="2" />
-        <line x1={branchColX} y1={5.5 * rowHeight} x2={branchColX} y2={5.5 * rowHeight} stroke="var(--yellow)" strokeWidth="2" />
-        <path d={`M ${branchColX} ${5.5 * rowHeight} C ${branchColX} ${6.2 * rowHeight}, ${mainColX} ${6.2 * rowHeight}, ${mainColX} ${6.5 * rowHeight}`} fill="none" stroke="var(--yellow)" strokeWidth="2" />
+        <path d={`M ${mainColX} ${4.5 * rowHeight} C ${mainColX} ${4.8 * rowHeight}, ${branchColX} ${4.8 * rowHeight}, ${branchColX} ${5.5 * rowHeight}`} fill="none" stroke="url(#yellowGradient)" strokeWidth="2.2" filter="url(#glow)" />
+        <line x1={branchColX} y1={5.5 * rowHeight} x2={branchColX} y2={5.5 * rowHeight} stroke="var(--yellow)" strokeWidth="2.2" filter="url(#glow)" />
+        <path d={`M ${branchColX} ${5.5 * rowHeight} C ${branchColX} ${6.2 * rowHeight}, ${mainColX} ${6.2 * rowHeight}, ${mainColX} ${6.5 * rowHeight}`} fill="none" stroke="url(#yellowGradient)" strokeWidth="2.2" filter="url(#glow)" />
 
         {/* Branch Lines: Feature Copilot */}
-        {/* Starts from row index 6 (a98b2c4) and splits to index 7 (8f7d9a1) and returns */}
-        <path d={`M ${mainColX} ${6.5 * rowHeight} C ${mainColX} ${6.8 * rowHeight}, ${branchColX} ${6.8 * rowHeight}, ${branchColX} ${7.5 * rowHeight}`} fill="none" stroke="var(--pink)" strokeWidth="2" />
-        <line x1={branchColX} y1={7.5 * rowHeight} x2={branchColX} y2={7.5 * rowHeight} stroke="var(--pink)" strokeWidth="2" />
-        <path d={`M ${branchColX} ${7.5 * rowHeight} C ${branchColX} ${8.2 * rowHeight}, ${mainColX} ${8.2 * rowHeight}, ${mainColX} ${8.5 * rowHeight}`} fill="none" stroke="var(--pink)" strokeWidth="2" />
+        <path d={`M ${mainColX} ${6.5 * rowHeight} C ${mainColX} ${6.8 * rowHeight}, ${branchColX} ${6.8 * rowHeight}, ${branchColX} ${7.5 * rowHeight}`} fill="none" stroke="url(#pinkGradient)" strokeWidth="2.2" filter="url(#glow)" />
+        <line x1={branchColX} y1={7.5 * rowHeight} x2={branchColX} y2={7.5 * rowHeight} stroke="var(--pink)" strokeWidth="2.2" filter="url(#glow)" />
+        <path d={`M ${branchColX} ${7.5 * rowHeight} C ${branchColX} ${8.2 * rowHeight}, ${mainColX} ${8.2 * rowHeight}, ${mainColX} ${8.5 * rowHeight}`} fill="none" stroke="url(#pinkGradient)" strokeWidth="2.2" filter="url(#glow)" />
       </svg>
     );
   };
@@ -189,6 +208,18 @@ const GitGraphPage = ({ setActivePage }) => {
       color: 'var(--text)',
       fontFamily: 'system-ui, sans-serif'
     }}>
+      <style>{`
+        @keyframes pulseRing {
+          0% {
+            transform: scale(0.4);
+            opacity: 0.8;
+          }
+          80%, 100% {
+            transform: scale(1.3);
+            opacity: 0;
+          }
+        }
+      `}</style>
       {/* LEFT PANEL: Git Timeline */}
       <div style={{
         flex: 1.3,
@@ -274,6 +305,23 @@ const GitGraphPage = ({ setActivePage }) => {
                     transition: 'transform 0.15s, background-color 0.15s',
                     zIndex: 3
                   }} />
+
+                  {/* Glowing Pulse Ring for Selected Nodes */}
+                  {isSelected && (
+                    <div style={{
+                      position: 'absolute',
+                      left: `${16 + nodeX - 14}px`,
+                      top: `${idx * rowHeight + (rowHeight / 2) - 14}px`,
+                      width: '28px',
+                      height: '28px',
+                      borderRadius: '50%',
+                      background: 'transparent',
+                      border: `2px solid ${nodeColor}`,
+                      animation: 'pulseRing 1.8s cubic-bezier(0.215, 0.610, 0.355, 1) infinite',
+                      pointerEvents: 'none',
+                      zIndex: 2
+                    }} />
+                  )}
                 </div>
               );
             })}

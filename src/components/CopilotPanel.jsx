@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 const KB = {
   about: {
     keywords: ['who', 'about', 'yourself', 'introduce', 'tell me about ashik', 'ashik', 'bio'],
-    answer: `I'm **Md. Ashik Siddike** — a motivated Full-Stack Web Developer and Graphic Designer based in **Magura, Bangladesh**.\n\nCurrently working as a **Full-Stack Developer at Nexinity Web Solution** and also as a **Support Engineer** for Dr. Sujit Biswas's team at City, University of London (remote).\n\nPassionate about building real-world applications, mastering modern tech stacks, and adapting quickly in a fast-paced environment. 🚀`,
+    answer: `I'm **Md. Ashik Siddike** — a motivated Full-Stack Web Developer and Graphic Designer based in **Bangladesh**.\n\nCurrently working as a **Full-Stack Developer at Nexinity Web Solution** and also as a **Support Engineer** for Dr. Sujit Biswas's team at City, University of London (remote).\n\nPassionate about building real-world applications, mastering modern tech stacks, and adapting quickly in a fast-paced environment. 🚀`,
   },
   projects: {
     keywords: ['project', 'built', 'build', 'portfolio', 'work', 'made', 'created', 'app'],
@@ -20,7 +20,7 @@ const KB = {
   },
   contact: {
     keywords: ['contact', 'reach', 'email', 'phone', 'hire', 'message', 'connect', 'social'],
-    answer: `You can reach Ashik through:\n\n📧 **Email:** ashiksiddike@gmail.com\n📞 **Phone:** +880 1918 766033\n📍 **Location:** Magura 7632, Bangladesh\n\n🔗 **Profiles:**\n• GitHub: github.com/Ashik-Siddike\n• LinkedIn: linkedin.com/in/ashik-siddike\n• Portfolio: ashiksiddike.com\n\n💬 Or use the **Contact** tab to send a direct message!`,
+    answer: `You can reach Ashik through:\n\n📧 **Email:** ashiksiddike@gmail.com\n📞 **Phone:** +880 1918 766033\n📍 **Location:** Bangladesh\n\n🔗 **Profiles:**\n• GitHub: github.com/Ashik-Siddike\n• LinkedIn: linkedin.com/in/ashik-siddike\n• Portfolio: ashiksiddike.com\n\n💬 Or use the **Contact** tab to send a direct message!`,
   },
   certifications: {
     keywords: ['certif', 'course', 'study', 'education', 'degree', 'diploma', 'quran', 'mern', 'programming hero'],
@@ -32,7 +32,7 @@ const KB = {
   },
   location: {
     keywords: ['locat', 'where', 'live', 'from', 'country', 'city', 'magura', 'bangladesh'],
-    answer: `Ashik is based in **Magura 7632, Bangladesh** 🇧🇩\n\nWorks fully remotely as a Support Engineer for City, University of London and collaborates across time zones. Open to remote opportunities globally! 🌍`,
+    answer: `Ashik is based in **Bangladesh** 🇧🇩\n\nWorks fully remotely as a Support Engineer for City, University of London and collaborates across time zones. Open to remote opportunities globally! 🌍`,
   },
 };
 

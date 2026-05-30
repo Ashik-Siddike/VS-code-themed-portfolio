@@ -116,8 +116,8 @@ const SOCIALS = [
   },
   {
     name: 'Location',
-    url: 'https://maps.google.com/?q=Magura,Bangladesh',
-    detail: 'Magura 7632, Bangladesh',
+    url: 'https://maps.google.com/?q=Bangladesh',
+    detail: 'Bangladesh',
     color: '#ff6fd8',
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

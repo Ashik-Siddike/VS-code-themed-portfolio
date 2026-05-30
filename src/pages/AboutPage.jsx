@@ -1,28 +1,28 @@
 import React, { useEffect } from 'react';
 
 const SKILLS = [
-  { name: 'HTML5',        color: '#f97316' },
-  { name: 'CSS3',         color: '#38bdf8' },
-  { name: 'JavaScript',   color: '#facc15' },
-  { name: 'TypeScript',   color: '#38bdf8' },
-  { name: 'React.js',     color: '#4fc1ff' },
-  { name: 'Next.js',      color: '#cccccc' },
-  { name: 'Tailwind CSS', color: '#34d399' },
-  { name: 'Node.js',      color: '#22c55e' },
-  { name: 'Express.js',   color: '#6366f1' },
-  { name: 'Firebase',     color: '#f97316' },
-  { name: 'MongoDB',      color: '#22c55e' },
-  { name: 'PostgreSQL',   color: '#38bdf8' },
-  { name: 'Supabase',     color: '#34d399' },
-  { name: 'Photoshop',    color: '#4fc1ff' },
-  { name: 'Illustrator',  color: '#f97316' },
-  { name: 'Figma',        color: '#ff6fd8' },
-  { name: 'AI Workflows', color: '#ff6fd8' },
-  { name: 'Prompt Eng.',  color: '#a855f7' },
-  { name: 'n8n',          color: '#ff6fd8' },
-  { name: 'Git & GitHub', color: '#f97316' },
-  { name: 'Vercel',       color: '#cccccc' },
-  { name: 'Cloudinary',   color: '#38bdf8' },
+  { name: 'HTML5',        color: '#f97316', level: 95 },
+  { name: 'CSS3',         color: '#38bdf8', level: 90 },
+  { name: 'JavaScript',   color: '#facc15', level: 95 },
+  { name: 'TypeScript',   color: '#38bdf8', level: 85 },
+  { name: 'React.js',     color: '#4fc1ff', level: 95 },
+  { name: 'Next.js',      color: '#cccccc', level: 90 },
+  { name: 'Tailwind CSS', color: '#34d399', level: 95 },
+  { name: 'Node.js',      color: '#22c55e', level: 90 },
+  { name: 'Express.js',   color: '#6366f1', level: 85 },
+  { name: 'Firebase',     color: '#f97316', level: 80 },
+  { name: 'MongoDB',      color: '#22c55e', level: 90 },
+  { name: 'PostgreSQL',   color: '#38bdf8', level: 75 },
+  { name: 'Supabase',     color: '#34d399', level: 85 },
+  { name: 'Photoshop',    color: '#4fc1ff', level: 90 },
+  { name: 'Illustrator',  color: '#f97316', level: 80 },
+  { name: 'Figma',        color: '#ff6fd8', level: 90 },
+  { name: 'AI Workflows', color: '#ff6fd8', level: 95 },
+  { name: 'Prompt Eng.',  color: '#a855f7', level: 95 },
+  { name: 'n8n',          color: '#ff6fd8', level: 90 },
+  { name: 'Git & GitHub', color: '#f97316', level: 90 },
+  { name: 'Vercel',       color: '#cccccc', level: 85 },
+  { name: 'Cloudinary',   color: '#38bdf8', level: 80 },
 ];
 
 const AboutPage = () => {
@@ -67,21 +67,45 @@ const AboutPage = () => {
         </div>
 
         {/* Code content */}
-        <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', lineHeight: 1.85, background: 'var(--bg)', padding: '20px 24px', overflowX: 'auto' }}>
-          <div style={{ color: 'var(--gcm)', marginBottom: '8px' }}>{'// about_me.js — Md. Ashik Siddike'}</div>
-          <div><span style={{ color: 'var(--purple)' }}>const</span> <span style={{ color: '#4fc1ff' }}>developer</span> <span style={{ color: 'var(--text)' }}>=</span> {'{'}</div>
-          <div style={{ paddingLeft: '1.5rem' }}>
-            <div><span style={{ color: '#facc15' }}>name</span><span style={{ color: 'var(--dim)' }}>:</span> <span style={{ color: '#ce9178' }}>"Md. Ashik Siddike"</span><span style={{ color: 'var(--dim)' }}>,</span></div>
-            <div><span style={{ color: '#facc15' }}>role</span><span style={{ color: 'var(--dim)' }}>:</span> <span style={{ color: '#ce9178' }}>"Full-Stack Developer & Graphic Designer"</span><span style={{ color: 'var(--dim)' }}>,</span></div>
-            <div><span style={{ color: '#facc15' }}>company</span><span style={{ color: 'var(--dim)' }}>:</span> <span style={{ color: '#22c55e' }}>"Nexinity Web Solution"</span><span style={{ color: 'var(--dim)' }}>,</span></div>
-            <div><span style={{ color: '#facc15' }}>also</span><span style={{ color: 'var(--dim)' }}>:</span> <span style={{ color: '#ce9178' }}>"Support Engineer @ City, University of London"</span><span style={{ color: 'var(--dim)' }}>,</span></div>
-            <div><span style={{ color: '#facc15' }}>email</span><span style={{ color: 'var(--dim)' }}>:</span> <span style={{ color: '#ce9178' }}>"ashiksiddike@gmail.com"</span><span style={{ color: 'var(--dim)' }}>,</span></div>
-            <div><span style={{ color: '#facc15' }}>location</span><span style={{ color: 'var(--dim)' }}>:</span> <span style={{ color: '#ce9178' }}>"Magura 7632, Bangladesh"</span><span style={{ color: 'var(--dim)' }}>,</span></div>
-            <div><span style={{ color: '#facc15' }}>phone</span><span style={{ color: 'var(--dim)' }}>:</span> <span style={{ color: '#ce9178' }}>"+880 1918 766033"</span><span style={{ color: 'var(--dim)' }}>,</span></div>
-            <div><span style={{ color: '#facc15' }}>portfolio</span><span style={{ color: 'var(--dim)' }}>:</span> <span style={{ color: '#38bdf8' }}>"ashiksiddike.com"</span><span style={{ color: 'var(--dim)' }}>,</span></div>
-            <div><span style={{ color: '#facc15' }}>openToWork</span><span style={{ color: 'var(--dim)' }}>:</span> <span style={{ color: '#22c55e' }}>true</span></div>
+        <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', lineHeight: 1.85, background: 'var(--bg)', padding: '20px 0', overflowX: 'auto', display: 'flex' }}>
+          {/* Gutter Column (Line Numbers) */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', paddingRight: '12px', paddingLeft: '16px', color: 'var(--dim)', borderRight: '1px solid rgba(255, 255, 255, 0.03)', userSelect: 'none', width: '38px', flexShrink: 0 }}>
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(n => <div key={n}>{n}</div>)}
           </div>
-          <div>{'}'}<span style={{ color: 'var(--dim)' }}>;</span></div>
+
+          {/* Git Change Indicators Gutter */}
+          <div style={{ display: 'flex', flexDirection: 'column', width: '4px', flexShrink: 0, marginRight: '12px' }}>
+            <div style={{ height: '22px' }} /> {/* line 1 */}
+            <div style={{ height: '22px' }} /> {/* line 2 */}
+            <div style={{ height: '22px', borderLeft: '3px solid var(--green)' }} /> {/* line 3 */}
+            <div style={{ height: '22px', borderLeft: '3px solid var(--green)' }} /> {/* line 4 */}
+            <div style={{ height: '22px' }} /> {/* line 5 */}
+            <div style={{ height: '22px', borderLeft: '3px solid var(--red)' }} /> {/* line 6 */}
+            <div style={{ height: '22px' }} /> {/* line 7 */}
+            <div style={{ height: '22px' }} /> {/* line 8 */}
+            <div style={{ height: '22px' }} /> {/* line 9 */}
+            <div style={{ height: '22px', borderLeft: '3px solid var(--blue)' }} /> {/* line 10 */}
+            <div style={{ height: '22px' }} /> {/* line 11 */}
+            <div style={{ height: '22px' }} /> {/* line 12 */}
+          </div>
+
+          {/* Code lines */}
+          <div style={{ flex: 1, paddingRight: '24px' }}>
+            <div style={{ color: 'var(--gcm)', marginBottom: '8px' }}>{'// about_me.js — Md. Ashik Siddike'}</div>
+            <div><span style={{ color: 'var(--purple)' }}>const</span> <span style={{ color: '#4fc1ff' }}>developer</span> <span style={{ color: 'var(--text)' }}>=</span> {'{'}</div>
+            <div style={{ paddingLeft: '1.2rem' }}>
+              <div><span style={{ color: '#facc15' }}>name</span><span style={{ color: 'var(--dim)' }}>:</span> <span style={{ color: '#ce9178' }}>"Md. Ashik Siddike"</span><span style={{ color: 'var(--dim)' }}>,</span></div>
+              <div><span style={{ color: '#facc15' }}>role</span><span style={{ color: 'var(--dim)' }}>:</span> <span style={{ color: '#ce9178' }}>"Full-Stack Developer & Graphic Designer"</span><span style={{ color: 'var(--dim)' }}>,</span></div>
+              <div><span style={{ color: '#facc15' }}>company</span><span style={{ color: 'var(--dim)' }}>:</span> <span style={{ color: '#22c55e' }}>"Nexinity Web Solution"</span><span style={{ color: 'var(--dim)' }}>,</span></div>
+              <div><span style={{ color: '#facc15' }}>also</span><span style={{ color: 'var(--dim)' }}>:</span> <span style={{ color: '#ce9178' }}>"Support Engineer @ City, University of London"</span><span style={{ color: 'var(--dim)' }}>,</span></div>
+              <div><span style={{ color: '#facc15' }}>email</span><span style={{ color: 'var(--dim)' }}>:</span> <span style={{ color: '#ce9178' }}>"ashiksiddike@gmail.com"</span><span style={{ color: 'var(--dim)' }}>,</span></div>
+              <div><span style={{ color: '#facc15' }}>location</span><span style={{ color: 'var(--dim)' }}>:</span> <span style={{ color: '#ce9178' }}>"Bangladesh"</span><span style={{ color: 'var(--dim)' }}>,</span></div>
+              <div><span style={{ color: '#facc15' }}>phone</span><span style={{ color: 'var(--dim)' }}>:</span> <span style={{ color: '#ce9178' }}>"+880 1918 766033"</span><span style={{ color: 'var(--dim)' }}>,</span></div>
+              <div><span style={{ color: '#facc15' }}>portfolio</span><span style={{ color: 'var(--dim)' }}>:</span> <span style={{ color: '#38bdf8' }}>"ashiksiddike.com"</span><span style={{ color: 'var(--dim)' }}>,</span></div>
+              <div><span style={{ color: '#facc15' }}>openToWork</span><span style={{ color: 'var(--dim)' }}>:</span> <span style={{ color: '#22c55e' }}>true</span></div>
+            </div>
+            <div>{'}'}<span style={{ color: 'var(--dim)' }}>;</span></div>
+          </div>
         </div>
       </div>
 
@@ -108,24 +132,26 @@ const AboutPage = () => {
         <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--bright)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{ color: '#ff6fd8' }}>#</span> Tech Stack
         </h2>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', maxWidth: '760px' }}>
-          {SKILLS.map(({ name, color }) => (
-            <span key={name} style={{
-              display: 'inline-flex', alignItems: 'center', gap: '7px',
-              padding: '5px 12px',
-              background: `${color}0e`,
-              border: `1px solid ${color}28`,
-              borderRadius: '5px', fontSize: '12px', color,
-              fontFamily: 'JetBrains Mono, monospace',
-              transition: 'all 0.15s ease',
-              cursor: 'default',
-            }}
-              onMouseEnter={e => { e.currentTarget.style.background = `${color}20`; e.currentTarget.style.borderColor = `${color}50`; }}
-              onMouseLeave={e => { e.currentTarget.style.background = `${color}0e`; e.currentTarget.style.borderColor = `${color}28`; }}
-            >
-              <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: color, display: 'inline-block', flexShrink: 0 }} />
-              {name}
-            </span>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(135px, 1fr))', gap: '12px', maxWidth: '760px' }}>
+          {SKILLS.map(({ name, color, level }) => (
+            <div key={name} className="glass-panel tilt-card" style={{
+              '--card-accent': color,
+              padding: '12px',
+              borderRadius: '8px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '6px',
+              cursor: 'default'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: color, display: 'inline-block', flexShrink: 0 }} />
+                <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--bright)', fontFamily: 'JetBrains Mono, monospace' }}>{name}</span>
+              </div>
+              <div style={{ width: '100%', height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '2px', overflow: 'hidden', marginTop: '2px' }}>
+                <div style={{ width: `${level}%`, height: '100%', background: color, borderRadius: '2px' }} />
+              </div>
+              <div style={{ fontSize: '9px', color: 'var(--dim)', textAlign: 'right', fontFamily: 'JetBrains Mono, monospace' }}>{level}% Confidence</div>
+            </div>
           ))}
         </div>
       </div>

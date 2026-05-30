@@ -81,7 +81,7 @@ const HomePage = ({ setActivePage }) => {
           <span style={{ color: 'var(--dim)' }}>// </span>Full-Stack Developer · Nexinity Web Solution
         </div>
 
-        <h1 className="font-display animate-su-2" style={{ fontSize: '46px', fontWeight: 800, lineHeight: 1.1, marginBottom: '6px', color: 'var(--bright)' }}>
+        <h1 className="font-display animate-su-2 theme-gradient-text" style={{ fontSize: '46px', fontWeight: 800, lineHeight: 1.1, marginBottom: '6px' }}>
           {typed}<span className="term-cursor" style={{ opacity: typed.length === full.length ? 0 : 1 }} />
         </h1>
 
@@ -206,8 +206,8 @@ const HomePage = ({ setActivePage }) => {
         </div>
 
         {/* Current company badge */}
-        <div className="animate-su-7" style={{ marginTop: '18px', display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 14px', borderRadius: '20px', background: 'rgba(34,197,94,0.06)', border: '1px solid rgba(34,197,94,0.2)' }}>
-          <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#22c55e', display: 'inline-block', boxShadow: '0 0 8px #22c55e' }} />
+        <div className="animate-su-7 glass-panel" style={{ marginTop: '18px', display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 14px', borderRadius: '20px' }}>
+          <span className="pulse-green-dot" style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />
           <span style={{ fontSize: '11px', color: '#22c55e', fontWeight: 500 }}>Currently @ Nexinity Web Solution</span>
         </div>
       </div>
