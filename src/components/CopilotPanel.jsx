@@ -4,35 +4,35 @@ import React, { useState, useRef, useEffect } from 'react';
 const KB = {
   about: {
     keywords: ['who', 'about', 'yourself', 'introduce', 'tell me about ashik', 'ashik', 'bio'],
-    answer: `I'm **Md. Ashik Siddike** — a motivated Full-Stack Web Developer and Graphic Designer based in **Bangladesh**.\n\nCurrently working as a **Full-Stack Developer at Nexinity Web Solution** and also as a **Support Engineer** for Dr. Sujit Biswas's team at City, University of London (remote).\n\nPassionate about building real-world applications, mastering modern tech stacks, and adapting quickly in a fast-paced environment. 🚀`,
+    answer: `🚀 **Md. Ashik Siddike** is a high-performing **Full-Stack Web Developer** & **Graphic Designer** based in **Bangladesh**.\n\n💼 **Current Focus:**\n• **Full-Stack Developer** @ Nexinity Web Solution\n• **Support Engineer** @ City, University of London (Remote)\n\n🧠 Passionate about building automated systems, deploying high-performance applications, and crafting premium, pixel-perfect user experiences.`,
   },
   projects: {
     keywords: ['project', 'built', 'build', 'portfolio', 'work', 'made', 'created', 'app'],
-    answer: `Here are some of Ashik's notable projects:\n\n🌐 **Affiliate Automation System** — AI pipeline using Python, n8n & Gemini API\n\n📚 **Kids Learning Platform** — EdTech app with React.js & Firebase (City UoL team)\n\n🛍 **MERN E-Commerce App** — Full-stack with Node.js, Express, MongoDB & React\n\n🤖 **AI Web Scraper** — Python + Selenium + BeautifulSoup automation\n\n🎨 **50+ Graphic Design Projects** — Logos, branding, posters for international clients\n\n👉 Check the **Projects** tab for full details!`,
+    answer: `💻 **Ashik's Featured Projects:**\n\n⚙️ **Affiliate Automation System**\nPython automated marketing system scraping trends and generating AI review content.\n\n🎓 **Kids Gamified Platform**\nInteractive education web app using React, Tailwind, and Firebase.\n\n📈 **MERN SaaS Dashboard**\nAnalytics platform with real-time data visualisations.\n\n👉 *Select files from the explorer sidebar or open the **Projects** tab to view the live preview/simulations!*`,
   },
   experience: {
     keywords: ['experience', 'job', 'work history', 'career', 'employed', 'company', 'nexinity', 'university', 'london'],
-    answer: `Ashik's professional journey:\n\n🟢 **Full-Stack Developer** @ Nexinity Web Solution *(2025 – Present)*\nBuilding end-to-end web apps with React, Next.js, Node.js & MongoDB.\n\n🔵 **Support Engineer** @ Dr. Sujit Biswas's Team · City, University of London *(May 2025 – Present · Remote)*\nBuilding accessible UIs with React & Tailwind for educational platforms.\n\n🟣 **Lead AI Automation Developer** @ Freelance *(2025 – Present)*\nAI pipelines, web scrapers, LLM agent integrations.\n\n🟠 **Freelance Graphic Designer** *(2022 – Present · 3+ Years)*\n50+ completed design projects for international clients.`,
+    answer: `💼 **Professional Journey:**\n\n🟢 **Full-Stack Developer** | *Nexinity Web Solution*\nArchitecting production-ready applications with React, Next.js, Node.js, and MongoDB.\n\n🔵 **Support Engineer** | *City, University of London*\nDeveloping accessible and user-friendly web features with React/Tailwind for UK research projects.\n\n🟣 **Lead Automation Creator** | *Freelance*\nBuilding Python crawlers, Selenium scrapers, and n8n/Make automation loops.`,
   },
   skills: {
     keywords: ['skill', 'tech', 'stack', 'technology', 'language', 'framework', 'tool', 'know', 'use', 'speciali'],
-    answer: `Ashik's tech stack:\n\n**Frontend:** React.js, Next.js, TypeScript, Tailwind CSS, shadcn/ui, HTML5, CSS3\n\n**Backend:** Node.js, Express.js, FastAPI, REST APIs, Firebase\n\n**Databases:** MongoDB, PostgreSQL, Supabase, SQL\n\n**AI & Automation:** Gemini API, OpenAI API, n8n, Make.com, LangChain, RAG Pipelines\n\n**Design:** Adobe Photoshop, Illustrator, Figma\n\n**Tools:** Git, Docker, Vercel, Cloudinary, VS Code\n\n📊 Check the **Skills** tab for proficiency bars!`,
+    answer: `🛠 **Technical Expertise:**\n\n🔹 **Frontend:** React.js, Next.js, TypeScript, Tailwind CSS, shadcn/ui, GSAP\n🔹 **Backend:** Node.js, Express.js, FastAPI, REST APIs, Firebase\n🔹 **Databases:** MongoDB, PostgreSQL, Supabase, SQL\n🔹 **Automation:** Python, Selenium, BeautifulSoup, n8n, Make.com, Gemini/OpenAI API\n🔹 **Design:** Figma, Photoshop, Illustrator`,
   },
   contact: {
     keywords: ['contact', 'reach', 'email', 'phone', 'hire', 'message', 'connect', 'social'],
-    answer: `You can reach Ashik through:\n\n📧 **Email:** ashiksiddike@gmail.com\n📞 **Phone:** +880 1918 766033\n📍 **Location:** Bangladesh\n\n🔗 **Profiles:**\n• GitHub: github.com/Ashik-Siddike\n• LinkedIn: linkedin.com/in/ashik-siddike\n• Portfolio: ashiksiddike.com\n\n💬 Or use the **Contact** tab to send a direct message!`,
+    answer: `📧 **Let's Connect!**\n\n📮 **Email:** [ashiksiddike@gmail.com](mailto:ashiksiddike@gmail.com)\n📞 **WhatsApp/Phone:** [+880 1918 766033](tel:+8801918766033)\n📍 **Location:** Bangladesh (Remote Worldwide)\n\n🔗 **Links:**\n• [GitHub](https://github.com/Ashik-Siddike)\n• [LinkedIn](https://linkedin.com/in/ashik-siddike)\n• [Portfolio](https://ashiksiddike.com)\n\n💬 Or submit a direct message in the **Contact** page!`,
   },
   certifications: {
     keywords: ['certif', 'course', 'study', 'education', 'degree', 'diploma', 'quran', 'mern', 'programming hero'],
-    answer: `Ashik's certifications:\n\n📜 **MERN Stack Development** — Programming Hero Academy\n\n📖 **Hafeez of the Holy Quran** — Full Quran memorization with Tajweed\n\n🤖 **AI Prompt Engineering** — Hands-on AI workflows & LLM prompting\n\nCurrently expanding skills in AI Agents, System Design, DevOps & Vector Databases.`,
+    answer: `📜 **Certifications & Achievements:**\n\n🎓 **MERN Stack Development**\nProgramming Hero Academy — Professional certification in MongoDB, Express, React, and Node.\n\n📖 **Hafeez of the Holy Quran**\nFull Quran memorization with Tajweed and correct recitation.\n\n🧠 **AI Prompt Engineering**\nHands-on integration of LLMs, agentic workflows, and API architectures.`,
   },
   design: {
     keywords: ['design', 'graphic', 'logo', 'photoshop', 'illustrator', 'figma', 'poster', 'brand', 'creative'],
-    answer: `Ashik is also an experienced **Freelance Graphic Designer** with 3+ years and **50+ completed client projects**!\n\n🎨 **Services include:**\n• Logo & Brand Identity Design\n• Social Media Creatives & Banners\n• Poster & Flyer Design\n• Digital Marketing Visuals\n• Figma UI/UX Mockups\n\n🛠 **Tools:** Adobe Photoshop, Illustrator, Figma`,
+    answer: `🎨 **Creative & Graphic Design:**\n\nAshik brings **3+ years of freelance experience** with **50+ completed client branding systems**:\n\n✨ Logo & Brand Identity Systems\n✨ High-conversion UI/UX Mockups (Figma)\n✨ Social Media Visual Campaigns\n\n🛠 **Creative Tools:** Figma, Adobe Photoshop, Adobe Illustrator.`,
   },
   location: {
     keywords: ['locat', 'where', 'live', 'from', 'country', 'city', 'magura', 'bangladesh'],
-    answer: `Ashik is based in **Bangladesh** 🇧🇩\n\nWorks fully remotely as a Support Engineer for City, University of London and collaborates across time zones. Open to remote opportunities globally! 🌍`,
+    answer: `🌍 **Current Base:**\n\nAshik is based in **Bangladesh** 🇧🇩 and works fully remotely, collaborating across time zones with teams in the UK and worldwide.`,
   },
 };
 
@@ -50,24 +50,141 @@ const getAnswer = (input) => {
   for (const key of Object.keys(KB)) {
     if (KB[key].keywords.some(kw => low.includes(kw))) return KB[key].answer;
   }
-  return `I'm Ashik's Copilot. Try asking:\n\n• "Tell me about Ashik"\n• "What projects has he built?"\n• "What's his tech stack?"\n• "How can I contact him?"`;
+  return `I'm Ashik's AI Copilot. Ask me about his:\n\n• **Background** ("Tell me about Ashik")\n• **Projects** ("What projects did he build?")\n• **Skills** ("What's his tech stack?")\n• **Experience** ("Tell me about his career")\n• **Contact** ("How can I reach him?")`;
 };
 
-/* Markdown-like bold + newline renderer */
-const renderText = (text) =>
-  text.split('\n').map((line, li) => {
-    const parts = line.split(/\*\*(.*?)\*\*/g);
+/* Helper for inline markdown elements (bold, links, code) */
+const parseInline = (text) => {
+  if (!text) return '';
+  
+  const boldParts = text.split(/\*\*(.*?)\*\*/g);
+  return boldParts.map((bPart, bIdx) => {
+    const isBold = bIdx % 2 === 1;
+    const codeParts = bPart.split(/`(.*?)`/g);
+    
+    const parsedCodeParts = codeParts.map((cPart, cIdx) => {
+      const isCode = cIdx % 2 === 1;
+      
+      if (isCode) {
+        return (
+          <code key={cIdx} style={{
+            background: 'var(--bg3)',
+            border: '1px solid var(--border)',
+            borderRadius: '4px',
+            padding: '2px 5px',
+            color: 'var(--yellow)',
+            fontFamily: 'JetBrains Mono, monospace',
+            fontSize: '10.5px'
+          }}>
+            {cPart}
+          </code>
+        );
+      }
+      
+      const linkParts = cPart.split(/\[(.*?)\]\((.*?)\)/g);
+      if (linkParts.length > 1) {
+        const elements = [];
+        for (let i = 0; i < linkParts.length; i += 3) {
+          elements.push(linkParts[i]);
+          if (linkParts[i + 1] && linkParts[i + 2]) {
+            elements.push(
+              <a 
+                key={i} 
+                href={linkParts[i + 2]} 
+                target="_blank" 
+                rel="noreferrer" 
+                style={{ 
+                  color: 'var(--blue)', 
+                  textDecoration: 'none',
+                  fontWeight: 600,
+                  borderBottom: '1px dashed var(--blue)',
+                }}
+                onMouseEnter={e => e.currentTarget.style.color = 'var(--bright)'}
+                onMouseLeave={e => e.currentTarget.style.color = 'var(--blue)'}
+              >
+                {linkParts[i + 1]}
+              </a>
+            );
+          }
+        }
+        return elements;
+      }
+      
+      return cPart;
+    });
+    
+    if (isBold) {
+      return (
+        <strong key={bIdx} style={{ color: 'var(--bright)', fontWeight: 700 }}>
+          {parsedCodeParts}
+        </strong>
+      );
+    }
+    return parsedCodeParts;
+  });
+};
+
+/* Sophisticated Markdown parsing */
+const renderText = (text) => {
+  if (!text) return null;
+  
+  const lines = text.split('\n');
+  return lines.map((line, idx) => {
+    if (line.startsWith('- ') || line.startsWith('* ') || line.startsWith('• ')) {
+      const content = line.substring(2);
+      return (
+        <div key={idx} style={{ display: 'flex', gap: '8px', paddingLeft: '4px', margin: '4px 0', alignItems: 'flex-start' }}>
+          <span style={{ color: '#a855f7', fontSize: '10px', marginTop: '4px' }}>✦</span>
+          <span style={{ flex: 1 }}>{parseInline(content)}</span>
+        </div>
+      );
+    }
+    
+    if (line.startsWith('> ')) {
+      return (
+        <blockquote key={idx} style={{
+          borderLeft: '2px solid #a855f7',
+          paddingLeft: '10px',
+          margin: '8px 0',
+          color: 'var(--dim)',
+          fontStyle: 'italic'
+        }}>
+          {parseInline(line.substring(2))}
+        </blockquote>
+      );
+    }
+    
+    if (line.startsWith('### ')) {
+      return (
+        <h4 key={idx} style={{ color: 'var(--bright)', fontSize: '13px', fontWeight: 700, margin: '10px 0 4px 0' }}>
+          {parseInline(line.substring(4))}
+        </h4>
+      );
+    }
+    if (line.startsWith('## ') || line.startsWith('# ')) {
+      const headingText = line.startsWith('## ') ? line.substring(3) : line.substring(2);
+      return (
+        <h3 key={idx} style={{ color: 'var(--bright)', fontSize: '14px', fontWeight: 800, margin: '12px 0 6px 0', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '3px' }}>
+          {parseInline(headingText)}
+        </h3>
+      );
+    }
+    
+    if (line.startsWith('```')) {
+      return null;
+    }
+    
+    if (line.trim() === '') {
+      return <div key={idx} style={{ height: '8px' }} />;
+    }
+    
     return (
-      <span key={li}>
-        {parts.map((p, pi) =>
-          pi % 2 === 1
-            ? <strong key={pi} style={{ color: 'var(--bright)', fontWeight: 700 }}>{p}</strong>
-            : <span key={pi}>{p}</span>
-        )}
-        <br />
-      </span>
+      <p key={idx} style={{ margin: '0 0 6px 0', padding: 0 }}>
+        {parseInline(line)}
+      </p>
     );
   });
+};
 
 const Bubble = ({ msg }) => {
   const isUser = msg.role === 'user';
@@ -75,34 +192,41 @@ const Bubble = ({ msg }) => {
     <div style={{
       display: 'flex',
       justifyContent: isUser ? 'flex-end' : 'flex-start',
-      marginBottom: '10px',
-      gap: '7px',
-      alignItems: 'flex-end',
+      marginBottom: '14px',
+      gap: '8px',
+      alignItems: 'flex-start',
     }}>
       {!isUser && (
         <div style={{
-          width: '22px', height: '22px', borderRadius: '50%',
-          background: 'linear-gradient(135deg, #6d28d9, #a855f7)',
+          width: '24px', height: '24px', borderRadius: '50%',
+          background: 'linear-gradient(135deg, #7c3aed, #c084fc)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: '11px', flexShrink: 0,
+          boxShadow: '0 2px 8px rgba(124, 58, 237, 0.4)',
+          color: 'white',
+          marginTop: '2px'
         }}>✦</div>
       )}
-      <div style={{
-        maxWidth: '84%',
-        padding: '8px 11px',
-        borderRadius: isUser ? '12px 12px 3px 12px' : '12px 12px 12px 3px',
-        background: isUser ? 'rgba(34,197,94,0.08)' : 'rgba(255,255,255,0.04)',
-        border: isUser ? '1px solid rgba(34,197,94,0.2)' : '1px solid rgba(255,255,255,0.06)',
-        fontSize: '12px', lineHeight: 1.7, color: 'var(--text)',
-      }}>
-        {isUser ? msg.text : renderText(msg.text)}
+      <div 
+        className={!isUser ? "glass-panel" : ""}
+        style={{
+          maxWidth: '82%',
+          padding: '10px 14px',
+          borderRadius: isUser ? '14px 14px 2px 14px' : '2px 14px 14px 14px',
+          background: isUser ? 'rgba(34,197,94,0.09)' : 'rgba(20, 20, 25, 0.35)',
+          border: isUser ? '1px solid rgba(34,197,94,0.22)' : '1px solid var(--border)',
+          fontSize: '12.5px', lineHeight: 1.65, color: 'var(--text)',
+          boxShadow: isUser ? 'none' : '0 4px 12px -2px rgba(0, 0, 0, 0.25)',
+        }}
+      >
+        {isUser ? msg.text : <div style={{ wordBreak: 'break-word' }}>{renderText(msg.text)}</div>}
       </div>
     </div>
   );
 };
 
 const TypingDots = () => (
-  <div style={{ display: 'flex', gap: '4px', padding: '8px 12px', alignItems: 'center' }}>
+  <div style={{ display: 'flex', gap: '4px', padding: '10px 14px', alignItems: 'center' }}>
     {[0, 1, 2].map(i => (
       <span key={i} style={{
         width: '5px', height: '5px', borderRadius: '50%',
@@ -380,19 +504,28 @@ const CopilotPanel = ({ open, onClose }) => {
 
             {/* ── Input ── */}
             <div style={{
-              padding: '10px 12px 12px',
+              padding: '12px 14px 14px',
               borderTop: '1px solid var(--border)',
               background: 'var(--bg2)',
               flexShrink: 0,
             }}>
               <div style={{
-                display: 'flex', alignItems: 'center', gap: '7px',
+                display: 'flex', alignItems: 'center', gap: '8px',
                 background: 'var(--bg)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: '8px', padding: '5px 8px',
+                border: '1px solid var(--border)',
+                borderRadius: '24px',
+                padding: '6px 12px',
+                transition: 'border-color 0.25s, box-shadow 0.25s',
+                boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.3)',
               }}
-                onFocusCapture={e => e.currentTarget.style.borderColor = 'rgba(168,85,247,0.4)'}
-                onBlurCapture={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'}
+                onFocusCapture={e => {
+                  e.currentTarget.style.borderColor = '#a855f7';
+                  e.currentTarget.style.boxShadow = 'inset 0 1px 3px rgba(0,0,0,0.3), 0 0 10px rgba(168,85,247,0.3)';
+                }}
+                onBlurCapture={e => {
+                  e.currentTarget.style.borderColor = 'var(--border)';
+                  e.currentTarget.style.boxShadow = 'inset 0 1px 3px rgba(0,0,0,0.3)';
+                }}
               >
                 <input
                   ref={inputRef}
@@ -402,7 +535,7 @@ const CopilotPanel = ({ open, onClose }) => {
                   placeholder="Ask about Ashik's projects, skills..."
                   style={{
                     flex: 1, background: 'transparent', border: 'none', outline: 'none',
-                    color: 'var(--text)', fontSize: '12px',
+                    color: 'var(--text)', fontSize: '12.5px',
                     fontFamily: 'system-ui, sans-serif',
                   }}
                 />
@@ -410,14 +543,14 @@ const CopilotPanel = ({ open, onClose }) => {
                   onClick={() => send(input)}
                   disabled={!input.trim() || typing}
                   style={{
-                    width: '26px', height: '26px', borderRadius: '6px', flexShrink: 0,
-                    background: input.trim() && !typing ? '#a855f7' : 'rgba(255,255,255,0.04)',
+                    width: '28px', height: '28px', borderRadius: '50%', flexShrink: 0,
+                    background: input.trim() && !typing ? 'linear-gradient(135deg, #7c3aed, #a855f7)' : 'rgba(255,255,255,0.04)',
                     border: 'none',
                     cursor: input.trim() && !typing ? 'pointer' : 'default',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     color: input.trim() && !typing ? '#fff' : 'var(--dim)',
-                    transition: 'all 0.14s',
-                    boxShadow: input.trim() && !typing ? '0 0 8px #a855f755' : 'none',
+                    transition: 'all 0.2s',
+                    boxShadow: input.trim() && !typing ? '0 2px 8px rgba(124, 58, 237, 0.4)' : 'none',
                   }}
                 >
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
@@ -425,7 +558,7 @@ const CopilotPanel = ({ open, onClose }) => {
                   </svg>
                 </button>
               </div>
-              <div style={{ fontSize: '9px', color: 'var(--dim)', marginTop: '5px', textAlign: 'center', opacity: 0.6 }}>
+              <div style={{ fontSize: '9px', color: 'var(--dim)', marginTop: '6px', textAlign: 'center', opacity: 0.6 }}>
                 AI can make mistakes · Contact Ashik directly for important info
               </div>
             </div>
