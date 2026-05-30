@@ -7,6 +7,8 @@ const DiagnosticsPage = () => {
   const [apiStatus, setApiStatus] = useState('checking...');
   const [dbStatus, setDbStatus] = useState('checking...');
   const [nodeVersion, setNodeVersion] = useState('checking...');
+  const [dbError, setDbError] = useState(null);
+  const [envDiagnostics, setEnvDiagnostics] = useState(null);
   const [runCount, setRunCount] = useState(0);
   const [isDone, setIsDone] = useState(false);
 
@@ -33,12 +35,16 @@ const DiagnosticsPage = () => {
         setApiStatus(data.status || 'ONLINE');
         setDbStatus(data.database || 'SHARD HEALTHY');
         setNodeVersion(data.nodeVersion || 'v20');
+        setDbError(data.error);
+        setEnvDiagnostics(data.envCheck);
       })
       .catch(() => {
         setLatency('offline');
         setApiStatus('OFFLINE');
         setDbStatus('OFFLINE');
         setNodeVersion('N/A');
+        setDbError('Could not fetch health stats');
+        setEnvDiagnostics(null);
       });
   }, [runCount]);
 
@@ -233,9 +239,15 @@ const DiagnosticsPage = () => {
               }
             } else if (log.dynamicDbValidation) {
               if (dbStatus === 'OFFLINE') {
+                let errText = '';
+                if (envDiagnostics && !envDiagnostics.hasMongoUri) {
+                  errText = ' (process.env.MONGO_URI is undefined)';
+                } else if (dbError) {
+                  errText = ` (${dbError})`;
+                }
                 return (
                   <div key={index} style={{ color: 'var(--red)', fontWeight: 'normal', whiteSpace: 'pre-wrap', animation: 'fadeIn 0.1s ease-out' }}>
-                    [ FAIL ] Validating local database connection...
+                    [ FAIL ] Validating local database connection...{errText}
                   </div>
                 );
               } else {
@@ -273,9 +285,21 @@ const DiagnosticsPage = () => {
               const icon = isOffline ? '✘' : '✔';
               const iconColor = isOffline ? 'var(--red)' : 'var(--green)';
               const textColor = isOffline ? 'var(--red)' : 'var(--text)';
+              let errText = '';
+              if (isOffline) {
+                if (envDiagnostics && !envDiagnostics.hasMongoUri) {
+                  errText = ' - OFFLINE (Missing MONGO_URI in Vercel settings)';
+                } else if (dbError) {
+                  errText = ` - OFFLINE (${dbError})`;
+                } else {
+                  errText = ' - OFFLINE';
+                }
+              } else {
+                errText = ` - ${dbStatus}`;
+              }
               return (
                 <div key={index} style={{ color: textColor, fontWeight: log.bold ? 'bold' : 'normal', whiteSpace: 'pre-wrap', animation: 'fadeIn 0.1s ease-out' }}>
-                  <span style={{ color: iconColor }}>{icon}</span> MongoDB Cluster - {dbStatus}
+                  <span style={{ color: iconColor }}>{icon}</span> MongoDB Cluster{errText}
                 </div>
               );
             }

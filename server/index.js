@@ -61,12 +61,29 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/copilot', copilotRoutes);
 app.use('/api/guestbook', guestbookRoutes);
 
-app.get('/api/health', (req, res) => {
-  const dbStatus = mongoose.connection.readyState === 1 ? 'SHARD HEALTHY' : 'OFFLINE';
+app.get('/api/health', async (req, res) => {
+  let dbStatus = 'OFFLINE';
+  let connectionError = null;
+  
+  try {
+    await connectDB();
+    dbStatus = mongoose.connection.readyState === 1 ? 'SHARD HEALTHY' : 'OFFLINE';
+  } catch (err) {
+    dbStatus = 'OFFLINE';
+    connectionError = err.message;
+  }
+
   res.json({
     status: 'ONLINE',
     database: dbStatus,
-    nodeVersion: process.version
+    dbState: mongoose.connection.readyState,
+    error: connectionError,
+    nodeVersion: process.version,
+    envCheck: {
+      hasMongoUri: !!process.env.MONGO_URI,
+      mongoUriLength: process.env.MONGO_URI ? process.env.MONGO_URI.length : 0,
+      mongoUriType: process.env.MONGO_URI ? (process.env.MONGO_URI.startsWith('mongodb+srv://') ? 'SRV' : 'Standard') : 'None'
+    }
   });
 });
 
