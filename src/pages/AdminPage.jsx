@@ -20,9 +20,19 @@ const AdminPage = () => {
   const [uploadError, setUploadError] = useState('');
 
   // Inbox/Messages States
-  const [activeSubTab, setActiveSubTab] = useState('projects'); // 'projects' or 'inbox'
+  const [activeSubTab, setActiveSubTab] = useState('projects'); // 'projects' or 'inbox', 'blogs'
   const [messages, setMessages] = useState([]);
   const [messagesLoading, setMessagesLoading] = useState(false);
+
+  // Blog Management States
+  const [blogs, setBlogs] = useState([]);
+  const [blogsLoading, setBlogsLoading] = useState(false);
+  const [blogFormData, setBlogFormData] = useState({
+    title: '', content: '', summary: '', category: '', tags: '', readTime: '', author: 'Md. Ashik Siddike', image: '', slug: ''
+  });
+  const [editingBlogId, setEditingBlogId] = useState(null);
+  const [uploadingBlogImage, setUploadingBlogImage] = useState(false);
+  const [blogUploadError, setBlogUploadError] = useState('');
 
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
@@ -73,6 +83,7 @@ const AdminPage = () => {
             setIsAuthenticated(true);
             fetchProjects(token);
             fetchMessages(token);
+            fetchBlogs();
           } else {
             localStorage.removeItem('admin_token');
           }
@@ -102,6 +113,7 @@ const AdminPage = () => {
         setIsAuthenticated(true);
         fetchProjects(data.token);
         fetchMessages(data.token);
+        fetchBlogs();
       } else {
         setLoginError(data.message || 'Login failed');
       }
@@ -115,6 +127,7 @@ const AdminPage = () => {
     setIsAuthenticated(false);
     setProjects([]);
     setMessages([]);
+    setBlogs([]);
     setEmail('');
     setPassword('');
   };
@@ -169,9 +182,136 @@ const AdminPage = () => {
     }
   };
 
+  const fetchBlogs = async () => {
+    setBlogsLoading(true);
+    try {
+      const res = await fetch('/api/blogs');
+      const data = await res.json();
+      setBlogs(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Error fetching blogs:", err);
+    } finally {
+      setBlogsLoading(false);
+    }
+  };
+
+  const handleBlogFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      setBlogUploadError('File size exceeds 5MB limit.');
+      return;
+    }
+
+    setUploadingBlogImage(true);
+    setBlogUploadError('');
+
+    const token = getToken();
+    const uploadData = new FormData();
+    uploadData.append('image', file);
+
+    try {
+      const res = await fetch('/api/blogs/upload', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: uploadData
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setBlogFormData(prev => ({ ...prev, image: data.url }));
+        showSuccess('📸 Blog cover uploaded successfully!');
+      } else {
+        setBlogUploadError(data.message || 'Upload failed');
+      }
+    } catch (err) {
+      setBlogUploadError('Failed to connect to upload server');
+    } finally {
+      setUploadingBlogImage(false);
+    }
+  };
+
+  const handleBlogInputChange = (e) => {
+    const { name, value } = e.target;
+    setBlogFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleBlogSubmit = async (e) => {
+    e.preventDefault();
+    const token = getToken();
+    try {
+      if (editingBlogId) {
+        const res = await fetch(`/api/blogs/${editingBlogId}`, {
+          method: 'PUT',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+          },
+          body: JSON.stringify(blogFormData)
+        });
+        if (!res.ok) throw new Error('Update failed');
+        showSuccess('✅ Blog article updated successfully!');
+      } else {
+        const res = await fetch('/api/blogs', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+          },
+          body: JSON.stringify(blogFormData)
+        });
+        if (!res.ok) throw new Error('Create failed');
+        showSuccess('✅ Blog article published successfully!');
+      }
+      setBlogFormData({
+        title: '', content: '', summary: '', category: '', tags: '', readTime: '', author: 'Md. Ashik Siddike', image: '', slug: ''
+      });
+      setEditingBlogId(null);
+      fetchBlogs();
+    } catch (err) {
+      console.error(err);
+      setLoginError('Action failed. Your session may have expired.');
+    }
+  };
+
+  const handleBlogEdit = (blog) => {
+    setBlogFormData({
+      title: blog.title || '',
+      content: blog.content || '',
+      summary: blog.summary || '',
+      category: blog.category || '',
+      tags: Array.isArray(blog.tags) ? blog.tags.join(', ') : '',
+      readTime: blog.readTime || '',
+      author: blog.author || 'Md. Ashik Siddike',
+      image: blog.image || '',
+      slug: blog.slug || ''
+    });
+    setEditingBlogId(blog._id);
+  };
+
+  const handleBlogDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this blog post?")) return;
+    try {
+      const token = getToken();
+      const res = await fetch(`/api/blogs/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('Delete failed');
+      showSuccess('🗑️ Blog post deleted!');
+      fetchBlogs();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
-    if (isAuthenticated && activeSubTab === 'inbox') {
-      fetchMessages();
+    if (isAuthenticated) {
+      if (activeSubTab === 'inbox') {
+        fetchMessages();
+      } else if (activeSubTab === 'blogs') {
+        fetchBlogs();
+      }
     }
   }, [activeSubTab, isAuthenticated]);
 
@@ -439,6 +579,41 @@ const AdminPage = () => {
             </span>
           )}
         </button>
+        <button
+          onClick={() => setActiveSubTab('blogs')}
+          style={{
+            padding: '8px 16px',
+            background: activeSubTab === 'blogs' ? 'var(--bg2)' : 'none',
+            border: '1px solid ' + (activeSubTab === 'blogs' ? 'var(--border)' : 'transparent'),
+            borderBottom: activeSubTab === 'blogs' ? '2px solid var(--blue)' : '1px solid transparent',
+            color: activeSubTab === 'blogs' ? 'var(--bright)' : 'var(--dim)',
+            fontSize: '13px',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            borderRadius: '4px 4px 0 0',
+            transition: 'all 0.15s',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}
+        >
+          📖 Manage Blogs
+          {blogs.length > 0 && (
+            <span style={{
+              background: 'var(--blue)',
+              color: 'white',
+              fontSize: '10px',
+              fontWeight: '800',
+              padding: '2px 7px',
+              borderRadius: '10px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              {blogs.length}
+            </span>
+          )}
+        </button>
       </div>
 
       {/* Success Message */}
@@ -642,6 +817,188 @@ const AdminPage = () => {
                         <span key={i} style={{ fontSize: '10px', background: 'rgba(79,193,255,0.1)', color: 'var(--blue)', padding: '2px 8px', borderRadius: '4px' }}>{t}</span>
                       ))}
                       {p.tech.length > 3 && <span style={{ fontSize: '10px', color: 'var(--dim)' }}>+{p.tech.length - 3}</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      ) : activeSubTab === 'blogs' ? (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+          {/* Form Column */}
+          <div style={{ background: 'var(--bg2)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--border)' }}>
+            <h3 style={{ color: 'var(--bright)', marginBottom: '1rem', fontSize: '14px' }}>
+              {editingBlogId ? '✏️ Edit Blog Post' : '✍️ Write New Blog Post'}
+            </h3>
+            <form onSubmit={handleBlogSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label style={labelStyle}>Title</label>
+                <input type="text" name="title" value={blogFormData.title} onChange={handleBlogInputChange} required style={inputStyle}
+                  onFocus={e => e.target.style.borderColor = 'var(--blue)'}
+                  onBlur={e => e.target.style.borderColor = 'var(--border)'} />
+              </div>
+              
+              <div>
+                <label style={labelStyle}>Slug (Optional, auto-generated if blank)</label>
+                <input type="text" name="slug" value={blogFormData.slug} onChange={handleBlogInputChange} placeholder="e.g. automating-affiliate-crawlers" style={inputStyle}
+                  onFocus={e => e.target.style.borderColor = 'var(--blue)'}
+                  onBlur={e => e.target.style.borderColor = 'var(--border)'} />
+              </div>
+
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <div style={{ flex: 1 }}>
+                  <label style={labelStyle}>Category</label>
+                  <input type="text" name="category" value={blogFormData.category} onChange={handleBlogInputChange} placeholder="AI & Automation" required style={inputStyle}
+                    onFocus={e => e.target.style.borderColor = 'var(--blue)'}
+                    onBlur={e => e.target.style.borderColor = 'var(--border)'} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={labelStyle}>Read Time</label>
+                  <input type="text" name="readTime" value={blogFormData.readTime} onChange={handleBlogInputChange} placeholder="5 min read" style={inputStyle}
+                    onFocus={e => e.target.style.borderColor = 'var(--blue)'}
+                    onBlur={e => e.target.style.borderColor = 'var(--border)'} />
+                </div>
+              </div>
+
+              <div>
+                <label style={labelStyle}>Tags (comma separated)</label>
+                <input type="text" name="tags" value={blogFormData.tags} onChange={handleBlogInputChange} placeholder="Python, Gemini, n8n" style={inputStyle}
+                  onFocus={e => e.target.style.borderColor = 'var(--blue)'}
+                  onBlur={e => e.target.style.borderColor = 'var(--border)'} />
+              </div>
+
+              {/* Cover Image upload */}
+              <div>
+                <label style={labelStyle}>Blog Cover Image</label>
+                <div
+                  style={{
+                    border: '1px dashed var(--border)',
+                    borderRadius: '6px',
+                    padding: '16px',
+                    textAlign: 'center',
+                    background: 'var(--bg)',
+                    cursor: 'pointer',
+                    position: 'relative',
+                    transition: 'border-color 0.2s',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--blue)'}
+                  onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
+                  onClick={() => document.getElementById('blog-image-upload-input').click()}
+                >
+                  <input id="blog-image-upload-input" type="file" accept="image/*" onChange={handleBlogFileUpload} style={{ display: 'none' }} />
+                  {uploadingBlogImage ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                      <div className="spinner" style={{ width: '20px', height: '20px', border: '2px solid rgba(255,255,255,0.1)', borderTopColor: 'var(--blue)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                      <span style={{ fontSize: '11px', color: 'var(--dim)' }}>Uploading cover image...</span>
+                    </div>
+                  ) : blogFormData.image ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                      <img src={blogFormData.image} alt="Preview" style={{ maxWidth: '100%', maxHeight: '110px', objectFit: 'contain', borderRadius: '4px', border: '1px solid var(--border)' }} />
+                      <span style={{ fontSize: '11px', color: 'var(--green)' }}>✓ Image ready</span>
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ fontSize: '18px' }}>📸</span>
+                      <span style={{ fontSize: '12px', color: 'var(--dim)' }}>Click to upload cover image from device</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Optional manual URL entry */}
+                <div style={{ display: 'flex', gap: '6px', marginTop: '10px' }}>
+                  <input type="text" name="image" value={blogFormData.image} onChange={handleBlogInputChange} placeholder="Or enter manual image URL..." style={{ ...inputStyle, flex: 1, fontSize: '11px' }} onClick={e => e.stopPropagation()} />
+                  {blogFormData.image && (
+                    <button type="button" onClick={(e) => { e.stopPropagation(); setBlogFormData(prev => ({ ...prev, image: '' })); }} style={{ padding: '6px 12px', background: 'rgba(244,67,54,0.1)', border: '1px solid rgba(244,67,54,0.2)', color: '#f44336', borderRadius: '4px', cursor: 'pointer', fontSize: '11px' }}>
+                      Remove
+                    </button>
+                  )}
+                </div>
+
+                {blogUploadError && (
+                  <div style={{ fontSize: '11px', color: 'var(--red)', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    ⚠️ {blogUploadError}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label style={labelStyle}>Summary (For Card/Meta Preview)</label>
+                <textarea name="summary" value={blogFormData.summary} onChange={handleBlogInputChange} style={{ ...inputStyle, minHeight: '60px', resize: 'vertical' }} placeholder="Provide a brief summary of this article..."
+                  onFocus={e => e.target.style.borderColor = 'var(--blue)'}
+                  onBlur={e => e.target.style.borderColor = 'var(--border)'} />
+              </div>
+
+              <div>
+                <label style={labelStyle}>Content (Markdown Supported)</label>
+                <textarea name="content" value={blogFormData.content} onChange={handleBlogInputChange} required style={{ ...inputStyle, minHeight: '300px', resize: 'vertical', fontFamily: 'JetBrains Mono, Courier New, monospace', fontSize: '12px' }} placeholder="# My Article Title&#10;&#10;Use markdown headers, lists, and code fences.&#10;&#10;```python&#10;print('Hello World')&#10;```"
+                  onFocus={e => e.target.style.borderColor = 'var(--blue)'}
+                  onBlur={e => e.target.style.borderColor = 'var(--border)'} />
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px', marginTop: '0.5rem' }}>
+                <button type="submit" style={btnPrimary}>
+                  {editingBlogId ? 'Update Post' : 'Publish Post'}
+                </button>
+                {editingBlogId && (
+                  <button type="button" onClick={() => {
+                    setEditingBlogId(null);
+                    setBlogFormData({ title: '', content: '', summary: '', category: '', tags: '', readTime: '', author: 'Md. Ashik Siddike', image: '', slug: '' });
+                  }} style={btnSecondary}>
+                    Cancel
+                  </button>
+                )}
+              </div>
+            </form>
+          </div>
+
+          {/* List Column */}
+          <div>
+            <h3 style={{ color: 'var(--bright)', marginBottom: '1rem', fontSize: '14px' }}>
+              📖 Dynamic Database Blogs ({blogs.length})
+            </h3>
+            {blogsLoading ? (
+              <div style={{ color: 'var(--dim)', padding: '2rem' }}>Loading dynamic blogs...</div>
+            ) : blogs.length === 0 ? (
+              <div style={{ color: 'var(--dim)', padding: '2rem', textAlign: 'center', background: 'var(--bg2)', borderRadius: '8px', border: '1px solid var(--border)' }}>
+                No database blogs found. Publish your first one on the left!
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '720px', overflowY: 'auto', paddingRight: '6px' }} className="thin-scroll">
+                {blogs.map((b) => (
+                  <div key={b._id} style={{
+                    padding: '14px', borderRadius: '8px', border: '1px solid var(--border)',
+                    background: 'var(--bg)', transition: 'border-color 0.2s'
+                  }}
+                    onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--blue)'}
+                    onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--purple)' }} />
+                        <h4 style={{ fontWeight: 'bold', color: 'var(--bright)', margin: 0, fontSize: '13px' }}>{b.title}</h4>
+                      </div>
+                      <div style={{ display: 'flex', gap: '4px' }}>
+                        <button onClick={() => handleBlogEdit(b)} style={actionBtn}
+                          onMouseEnter={e => { e.target.style.background = 'rgba(79,193,255,0.15)'; }}
+                          onMouseLeave={e => { e.target.style.background = 'transparent'; }}
+                        >✏️</button>
+                        <button onClick={() => handleBlogDelete(b._id)} style={actionBtn}
+                          onMouseEnter={e => { e.target.style.background = 'rgba(244,67,54,0.15)'; }}
+                          onMouseLeave={e => { e.target.style.background = 'transparent'; }}
+                        >🗑️</button>
+                      </div>
+                    </div>
+                    <p style={{ fontSize: '11px', color: 'var(--text)', margin: '0 0 8px 0', lineHeight: 1.5 }}>
+                      {b.summary || (b.content && b.content.substring(0, 120)) || 'No summary provided.'}
+                    </p>
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
+                      <span style={{ fontSize: '10px', background: 'rgba(168,85,247,0.15)', color: '#dcdcaa', padding: '2px 8px', borderRadius: '4px', border: '1px solid rgba(168,85,247,0.2)' }}>
+                        {b.category || 'AI & Automation'}
+                      </span>
+                      {b.tags && b.tags.slice(0, 3).map((t, i) => (
+                        <span key={i} style={{ fontSize: '10px', background: 'rgba(79,193,255,0.1)', color: 'var(--blue)', padding: '2px 8px', borderRadius: '4px' }}>{t}</span>
+                      ))}
                     </div>
                   </div>
                 ))}

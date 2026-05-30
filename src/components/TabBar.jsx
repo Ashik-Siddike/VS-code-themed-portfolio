@@ -4,7 +4,16 @@ import { PAGES } from '../constants';
 const TabBar = ({ activePage, setActivePage, openTabs, closeTab }) => (
   <div className="tab-bar">
     {openTabs.map(pageId => {
-      const page = PAGES.find(p => p.id === pageId);
+      let page = PAGES.find(p => p.id === pageId);
+      if (!page && pageId.startsWith('blog_')) {
+        const slug = pageId.replace('blog_', '');
+        const mdPage = PAGES.find(p => p.id === 'readme');
+        page = {
+          id: pageId,
+          label: `${slug}.md`,
+          icon: mdPage ? mdPage.icon : '📄'
+        };
+      }
       if (!page) return null;
       const isActive = activePage === page.id;
       return (

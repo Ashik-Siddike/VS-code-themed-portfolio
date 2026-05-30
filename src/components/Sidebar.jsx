@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { PAGES } from '../constants';
 
 const ChevronDown = () => (
@@ -23,10 +23,33 @@ const FolderIcon = () => (
 );
 
 const Sidebar = ({ activePage, setActivePage, openTabs = [], sidebarOpen = true, openCopilotChat, activityActive = 'explorer' }) => {
-  const [open, setOpen] = React.useState({ PORTFOLIO: true, 'OPEN EDITORS': false, OUTLINE: false });
-  const [blogFolderOpen, setBlogFolderOpen] = React.useState(false);
+  const [open, setOpen] = useState({ PORTFOLIO: true, 'OPEN EDITORS': false, OUTLINE: false });
+  const [blogFolderOpen, setBlogFolderOpen] = useState(false);
+  const [dbBlogs, setDbBlogs] = useState([]);
 
-  const openFiles = PAGES.filter(p => openTabs.includes(p.id) && !p.download);
+  useEffect(() => {
+    fetch('/api/blogs')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setDbBlogs(data);
+      })
+      .catch(err => console.error("Error fetching db blogs in sidebar:", err));
+  }, [activePage]);
+
+  const staticOpenFiles = PAGES.filter(p => openTabs.includes(p.id) && !p.download);
+  const dynamicOpenFiles = openTabs
+    .filter(tabId => tabId.startsWith('blog_') && !PAGES.some(p => p.id === tabId))
+    .map(tabId => {
+      const slug = tabId.replace('blog_', '');
+      const mdPage = PAGES.find(p => p.id === 'readme');
+      return {
+        id: tabId,
+        label: `${slug}.md`,
+        icon: mdPage ? mdPage.icon : '📄',
+        folder: 'blog'
+      };
+    });
+  const openFiles = [...staticOpenFiles, ...dynamicOpenFiles];
 
   const toggle = (label) => setOpen(o => ({ ...o, [label]: !o[label] }));
 
@@ -153,7 +176,22 @@ const Sidebar = ({ activePage, setActivePage, openTabs = [], sidebarOpen = true,
                     </span>
                   </div>
                   
-                  {blogFolderOpen && PAGES.filter(p => !p.hidden && p.folder === 'blog').map((page) => renderPageItem(page, true))}
+                  {blogFolderOpen && (
+                    <>
+                      {/* Static articles */}
+                      {PAGES.filter(p => !p.hidden && p.folder === 'blog').map((page) => renderPageItem(page, true))}
+                      {/* Database-backed articles */}
+                      {dbBlogs.map(blog => {
+                        const mdPage = PAGES.find(p => p.id === 'readme');
+                        return renderPageItem({
+                          id: `blog_${blog.slug}`,
+                          label: `${blog.slug}.md`,
+                          icon: mdPage ? mdPage.icon : '📄',
+                          folder: 'blog'
+                        }, true);
+                      })}
+                    </>
+                  )}
                 </div>
 
                 {/* Root-level files */}

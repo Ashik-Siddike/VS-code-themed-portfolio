@@ -200,8 +200,14 @@ function App() {
     return () => document.removeEventListener('click', h);
   }, []);
 
-  const ActivePage = PAGE_COMPONENTS[activePage] || HomePage;
-  const crumbs = BREADCRUMBS[activePage] || ['portfolio'];
+  const ActivePage = PAGE_COMPONENTS[activePage] || (activePage.startsWith('blog_') ? BlogPage : HomePage);
+  
+  let crumbs = BREADCRUMBS[activePage];
+  if (!crumbs && activePage.startsWith('blog_')) {
+    const slug = activePage.replace('blog_', '');
+    crumbs = ['portfolio', 'src', 'blog', `${slug}.md`];
+  }
+  if (!crumbs) crumbs = ['portfolio'];
 
   return (
     <div className="app-grid" style={{ 
@@ -332,6 +338,7 @@ function App() {
           <div className="editor-content">
             <div key={pageKey} className="pane-enter">
               <ActivePage
+                activePage={activePage}
                 setActivePage={navigate}
                 browserUrl={browserUrl}
                 browserTitle={browserTitle}

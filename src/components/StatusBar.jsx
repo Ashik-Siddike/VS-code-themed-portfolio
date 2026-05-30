@@ -15,7 +15,9 @@ const StatusBar = ({ activePage, theme, cursor, openCopilot }) => {
     return () => clearInterval(id);
   }, []);
 
-  const ext = page ? page.label.split('.').pop().toUpperCase() : 'JSX';
+  const ext = page 
+    ? page.label.split('.').pop().toUpperCase() 
+    : (activePage && activePage.startsWith('blog_') ? 'MD' : 'JSX');
 
   return (
     <div className="status-bar">
