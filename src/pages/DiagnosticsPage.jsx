@@ -78,7 +78,8 @@ const DiagnosticsPage = () => {
 
     const interval = setInterval(() => {
       if (current < scriptLines.length) {
-        setLogs(prev => [...prev, scriptLines[current]]);
+        const nextLine = scriptLines[current];
+        setLogs(prev => [...prev, nextLine]);
         current++;
       } else {
         setIsDone(true);
