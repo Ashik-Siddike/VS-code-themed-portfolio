@@ -190,6 +190,26 @@ const Sidebar = ({ activePage, setActivePage, openTabs = [], sidebarOpen = true,
                           folder: 'blog'
                         }, true);
                       })}
+                      
+                      {/* View All Articles Link */}
+                      <div 
+                        onClick={() => setActivePage('articles')}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          padding: '6px 12px 6px 38px',
+                          color: 'var(--blue)',
+                          fontSize: '11px',
+                          cursor: 'pointer',
+                          fontFamily: 'system-ui, sans-serif'
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.color = 'var(--blue2)'}
+                        onMouseLeave={e => e.currentTarget.style.color = 'var(--blue)'}
+                      >
+                        <span style={{ fontSize: '13px' }}>🔗</span>
+                        View All Articles ↗
+                      </div>
                     </>
                   )}
                 </div>

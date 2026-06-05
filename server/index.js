@@ -4,9 +4,24 @@ const cors = require('cors');
 const path = require('path');
 const dotenv = require('dotenv');
 
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+
 dotenv.config({ path: path.join(__dirname, '.env') });
 
 const app = express();
+
+// Security Middleware
+app.use(helmet());
+
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: { message: "Too many requests from this IP, please try again after 15 minutes" }
+});
+
+app.use('/api/', apiLimiter);
+
 app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
@@ -56,12 +71,14 @@ const messageRoutes = require('./routes/messageRoutes');
 const copilotRoutes = require('./routes/copilotRoutes');
 const guestbookRoutes = require('./routes/guestbookRoutes');
 const blogRoutes = require('./routes/blogRoutes');
+const botRoutes = require('./routes/botRoutes');
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/copilot', copilotRoutes);
 app.use('/api/guestbook', guestbookRoutes);
 app.use('/api/blogs', blogRoutes);
+app.use('/api/bots', botRoutes);
 
 app.get('/api/health', async (req, res) => {
   let dbStatus = 'OFFLINE';

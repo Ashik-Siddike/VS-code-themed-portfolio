@@ -75,4 +75,5 @@ export const PAGES = [
   { id: 'git_graph',       label: 'git_graph.tsx',       icon: <GitGraphIcon />, color: '#ce9178' },
   { id: 'resume',     label: 'Ashik_Siddike_Resume.pdf', icon: <PdfIcon />, color: '#f44336', download: true },
   { id: 'browser',    label: 'Simple Browser',   icon: <BrowserIcon />, color: '#34d399', hidden: true },
+  { id: 'articles',   label: 'articles.js',      icon: <JsIcon />, color: '#f7df1e', hidden: true },
 ];

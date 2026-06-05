@@ -23,6 +23,7 @@ import WorkHistoryPage from './pages/WorkHistoryPage';
 import AdminPage     from './pages/AdminPage';
 import BrowserPage   from './pages/BrowserPage';
 import BlogPage      from './pages/BlogPage';
+import ArticlesPage  from './pages/ArticlesPage';
 import GithubActivityPage from './pages/GithubActivityPage';
 import DiagnosticsPage from './pages/DiagnosticsPage';
 import GitGraphPage    from './pages/GitGraphPage';
@@ -55,6 +56,7 @@ const PAGE_COMPONENTS = {
   github_activity: GithubActivityPage,
   diagnostics: DiagnosticsPage,
   git_graph: GitGraphPage,
+  articles: ArticlesPage,
 };
 
 function App() {

@@ -34,6 +34,12 @@ const AdminPage = () => {
   const [uploadingBlogImage, setUploadingBlogImage] = useState(false);
   const [blogUploadError, setBlogUploadError] = useState('');
 
+  // Bot Management States
+  const [botSources, setBotSources] = useState([]);
+  const [botSourcesLoading, setBotSourcesLoading] = useState(false);
+  const [botFormData, setBotFormData] = useState({ twitter_handle: '', niche: '' });
+  const [botConfig, setBotConfig] = useState({ interval: '6', max_articles: '5', run_mode: 'autopilot' });
+
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -305,12 +311,121 @@ const AdminPage = () => {
     }
   };
 
+  // Bot Management Functions
+  const fetchBotSources = async () => {
+    setBotSourcesLoading(true);
+    try {
+      const res = await fetch('/api/bots/sources', {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const data = await res.json();
+      setBotSources(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Error fetching bot sources:", err);
+    } finally {
+      setBotSourcesLoading(false);
+    }
+  };
+
+  const handleBotSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch('/api/bots/sources', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getToken()}` 
+        },
+        body: JSON.stringify(botFormData)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Failed to add source');
+      showSuccess('🤖 Bot source added successfully!');
+      setBotFormData({ twitter_handle: '', niche: '' });
+      fetchBotSources();
+    } catch (err) {
+      console.error(err);
+      setLoginError(err.message);
+    }
+  };
+
+  const handleBotToggle = async (id, currentStatus) => {
+    try {
+      const res = await fetch(`/api/bots/sources/${id}/toggle`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getToken()}` 
+        },
+        body: JSON.stringify({ is_active: !currentStatus })
+      });
+      if (!res.ok) throw new Error('Toggle failed');
+      showSuccess('🤖 Bot status updated!');
+      fetchBotSources();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleBotDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this bot source?")) return;
+    try {
+      const res = await fetch(`/api/bots/sources/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      if (!res.ok) throw new Error('Delete failed');
+      showSuccess('🗑️ Bot source deleted!');
+      fetchBotSources();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchBotConfig = async () => {
+    try {
+      const res = await fetch('/api/bots/config', {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        const configObj = { interval: '6', max_articles: '5', run_mode: 'autopilot' };
+        data.forEach(item => {
+          if (configObj[item.key] !== undefined) configObj[item.key] = item.value;
+        });
+        setBotConfig(configObj);
+      }
+    } catch (err) {
+      console.error("Error fetching bot config:", err);
+    }
+  };
+
+  const saveBotConfig = async (key, value) => {
+    try {
+      const res = await fetch('/api/bots/config', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getToken()}` 
+        },
+        body: JSON.stringify({ key, value })
+      });
+      if (!res.ok) throw new Error('Failed to save config');
+      showSuccess(`⚙️ Bot ${key} updated!`);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     if (isAuthenticated) {
       if (activeSubTab === 'inbox') {
         fetchMessages();
       } else if (activeSubTab === 'blogs') {
         fetchBlogs();
+      } else if (activeSubTab === 'bots') {
+        fetchBotSources();
+        fetchBotConfig();
       }
     }
   }, [activeSubTab, isAuthenticated]);
@@ -613,6 +728,26 @@ const AdminPage = () => {
               {blogs.length}
             </span>
           )}
+        </button>
+        <button
+          onClick={() => setActiveSubTab('bots')}
+          style={{
+            padding: '8px 16px',
+            background: activeSubTab === 'bots' ? 'var(--bg2)' : 'none',
+            border: '1px solid ' + (activeSubTab === 'bots' ? 'var(--border)' : 'transparent'),
+            borderBottom: activeSubTab === 'bots' ? '2px solid var(--blue)' : '1px solid transparent',
+            color: activeSubTab === 'bots' ? 'var(--bright)' : 'var(--dim)',
+            fontSize: '13px',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            borderRadius: '4px 4px 0 0',
+            transition: 'all 0.15s',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}
+        >
+          🤖 Bot Controls
         </button>
       </div>
 
@@ -1006,7 +1141,7 @@ const AdminPage = () => {
             )}
           </div>
         </div>
-      ) : (
+      ) : activeSubTab === 'inbox' ? (
         /* Inbox tab render content */
         <div style={{ background: 'var(--bg2)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--border)' }}>
           <h3 style={{ color: 'var(--bright)', marginBottom: '1.2rem', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -1091,7 +1226,124 @@ const AdminPage = () => {
             </div>
           )}
         </div>
+      ) : (
+        /* Bots tab render content */
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '2rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            {/* Add Bot Form */}
+            <div style={{ background: 'var(--bg2)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--border)' }}>
+              <h3 style={{ color: 'var(--bright)', marginBottom: '1rem', fontSize: '14px' }}>
+                ➕ Add New Twitter Target
+              </h3>
+              <form onSubmit={handleBotSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div>
+                  <label style={labelStyle}>Twitter Handle (e.g. @elonmusk)</label>
+                  <input type="text" name="twitter_handle" value={botFormData.twitter_handle} 
+                    onChange={(e) => setBotFormData({...botFormData, twitter_handle: e.target.value})} 
+                    required style={inputStyle}
+                    onFocus={e => e.target.style.borderColor = 'var(--blue)'}
+                    onBlur={e => e.target.style.borderColor = 'var(--border)'} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Niche / Category</label>
+                  <input type="text" name="niche" value={botFormData.niche} 
+                    onChange={(e) => setBotFormData({...botFormData, niche: e.target.value})} 
+                    required style={inputStyle} placeholder="e.g. Technology, Crypto, AI"
+                    onFocus={e => e.target.style.borderColor = 'var(--blue)'}
+                    onBlur={e => e.target.style.borderColor = 'var(--border)'} />
+                </div>
+                <button type="submit" style={{...btnPrimary, marginTop: '0.5rem'}}>
+                  Add Target
+                </button>
+              </form>
+            </div>
+
+            {/* Global Bot Config */}
+            <div style={{ background: 'var(--bg2)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--border)' }}>
+              <h3 style={{ color: 'var(--bright)', marginBottom: '1rem', fontSize: '14px' }}>
+                ⚙️ Global Bot Settings
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div>
+                  <label style={labelStyle}>Posting Interval (Hours)</label>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <input type="number" min="1" max="72" value={botConfig.interval} 
+                      onChange={(e) => setBotConfig({...botConfig, interval: e.target.value})} 
+                      style={inputStyle}
+                      onFocus={e => e.target.style.borderColor = 'var(--blue)'}
+                      onBlur={e => e.target.style.borderColor = 'var(--border)'} />
+                    <button onClick={() => saveBotConfig('interval', botConfig.interval)} style={{...btnSecondary, flex: '0 0 auto'}}>Save</button>
+                  </div>
+                </div>
+                <div>
+                  <label style={labelStyle}>Max Articles Per Cycle</label>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <input type="number" min="1" max="20" value={botConfig.max_articles} 
+                      onChange={(e) => setBotConfig({...botConfig, max_articles: e.target.value})} 
+                      style={inputStyle}
+                      onFocus={e => e.target.style.borderColor = 'var(--blue)'}
+                      onBlur={e => e.target.style.borderColor = 'var(--border)'} />
+                    <button onClick={() => saveBotConfig('max_articles', botConfig.max_articles)} style={{...btnSecondary, flex: '0 0 auto'}}>Save</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bot Sources List */}
+          <div>
+            <h3 style={{ color: 'var(--bright)', marginBottom: '1rem', fontSize: '14px' }}>
+              🎯 Active Targets ({botSources.length})
+            </h3>
+            {botSourcesLoading ? (
+              <div style={{ color: 'var(--dim)', padding: '2rem' }}>Loading targets...</div>
+            ) : botSources.length === 0 ? (
+              <div style={{ color: 'var(--dim)', padding: '2rem', textAlign: 'center', background: 'var(--bg2)', borderRadius: '8px', border: '1px solid var(--border)' }}>
+                No targets found. Add a Twitter handle to start auto-blogging!
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '720px', overflowY: 'auto', paddingRight: '6px' }} className="thin-scroll">
+                {botSources.map((source) => (
+                  <div key={source.id} style={{
+                    padding: '14px', borderRadius: '8px', border: '1px solid var(--border)',
+                    background: 'var(--bg)', display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+                  }}>
+                    <div>
+                      <h4 style={{ fontWeight: 'bold', color: 'var(--bright)', margin: '0 0 4px 0', fontSize: '13px' }}>
+                        @{source.twitter_handle}
+                      </h4>
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <span style={{ fontSize: '10px', background: 'rgba(79,193,255,0.1)', color: 'var(--blue)', padding: '2px 6px', borderRadius: '4px' }}>
+                          {source.niche}
+                        </span>
+                        <span style={{ fontSize: '10px', color: 'var(--dim)' }}>
+                          Errors: <span style={{ color: source.error_count > 0 ? 'var(--red)' : 'var(--green)' }}>{source.error_count}</span>
+                        </span>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                      <button onClick={() => handleBotToggle(source.id, source.is_active)} 
+                        style={{
+                          padding: '4px 8px', borderRadius: '4px', border: 'none', cursor: 'pointer',
+                          fontSize: '11px', fontWeight: 'bold',
+                          background: source.is_active ? 'rgba(78,201,176,0.15)' : 'rgba(244,67,54,0.15)',
+                          color: source.is_active ? 'var(--green)' : 'var(--red)'
+                        }}>
+                        {source.is_active ? 'Active' : 'Paused'}
+                      </button>
+                      <button onClick={() => handleBotDelete(source.id)} style={actionBtn}
+                        onMouseEnter={e => { e.target.style.background = 'rgba(244,67,54,0.15)'; }}
+                        onMouseLeave={e => { e.target.style.background = 'transparent'; }}
+                      >🗑️</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
       )}
+
 
       {/* Inline keyframe for spinner */}
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>

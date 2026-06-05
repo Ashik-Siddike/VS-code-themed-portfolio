@@ -44,7 +44,11 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ success: false, message: 'Invalid messages array' });
   }
 
-  const geminiKey = process.env.GEMINI_API_KEY || 'AIzaSyDF_bVLfFZZ98MTfucGxB4-AAqTDnSegw8';
+  const geminiKey = process.env.GEMINI_API_KEY;
+  if (!geminiKey) {
+    console.error('GEMINI_API_KEY is not defined in environment variables');
+    return res.status(500).json({ success: false, message: 'AI Engine configuration error' });
+  }
 
   try {
     // Format messages for Gemini API
