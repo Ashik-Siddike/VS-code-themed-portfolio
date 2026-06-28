@@ -96,6 +96,29 @@ const ReadmePage = () => {
 
       <hr style={{ border: 'none', borderTop: '1px solid var(--border)', margin: '28px 0' }} />
 
+      {/* Education Section */}
+      <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--bright)', letterSpacing: '-0.01em', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <span>🎓</span> Education
+      </h2>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '24px' }}>
+        <div style={{ padding: '12px 16px', borderRadius: '6px', background: 'rgba(255,255,255,0.015)', border: '1px solid rgba(255,255,255,0.04)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap' }}>
+            <strong style={{ color: 'var(--bright)', fontSize: '14px' }}>Diploma in Computer Science & Technology</strong>
+            <span style={{ fontSize: '11px', color: 'var(--dim)', fontFamily: 'JetBrains Mono' }}>Jan 2023 – Jan 2027 (7th Sem)</span>
+          </div>
+          <div style={{ fontSize: '12.5px', color: 'var(--text)', opacity: 0.85, marginTop: '4px' }}>Jessore Polytechnic Institute</div>
+        </div>
+        <div style={{ padding: '12px 16px', borderRadius: '6px', background: 'rgba(255,255,255,0.015)', border: '1px solid rgba(255,255,255,0.04)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap' }}>
+            <strong style={{ color: 'var(--bright)', fontSize: '14px' }}>Secondary School Certificate (SSC) — Vocational</strong>
+            <span style={{ fontSize: '11px', color: 'var(--dim)', fontFamily: 'JetBrains Mono' }}>Graduated: 2022 | GPA: 4.86</span>
+          </div>
+          <div style={{ fontSize: '12.5px', color: 'var(--text)', opacity: 0.85, marginTop: '4px' }}>Satkhira Government Technical School and College</div>
+        </div>
+      </div>
+
+      <hr style={{ border: 'none', borderTop: '1px solid var(--border)', margin: '28px 0' }} />
+
       {/* Stack Table */}
       <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--bright)', letterSpacing: '-0.01em', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
         <span>🛠️</span> Stack & Technologies

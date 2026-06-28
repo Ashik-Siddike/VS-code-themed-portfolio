@@ -108,7 +108,7 @@ function App() {
   const navigate = useCallback((pageId) => {
     if (pageId === 'resume') {
       const link = document.createElement("a");
-      link.href = "/Ashik_Siddike_Resume.pdf";
+      link.href = "./Ashik_Siddike_Resume.pdf";
       link.download = "Ashik_Siddike_Resume.pdf";
       document.body.appendChild(link);
       link.click();

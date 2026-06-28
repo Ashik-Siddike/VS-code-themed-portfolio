@@ -22,7 +22,7 @@ const SkillBar = ({ name, pct, color }) => {
         <span style={{ fontSize: '11px', color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace' }}>{name}</span>
         <span style={{ fontSize: '10px', color: 'var(--dim)', fontFamily: 'JetBrains Mono, monospace' }}>{pct}%</span>
       </div>
-      <div style={{ height: '2px', background: 'rgba(255,255,255,0.07)', borderRadius: '2px', overflow: 'hidden' }}>
+      <div style={{ height: '5px', background: 'rgba(255,255,255,0.07)', borderRadius: '2px', overflow: 'hidden' }}>
         <div
           ref={barRef}
           style={{

@@ -181,8 +181,27 @@ const AboutPage = () => {
         </div>
       </div>
 
-      {/* Certifications & Languages */}
-      <div className="reveal" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', maxWidth: '760px' }}>
+      {/* Credentials Grid */}
+      <div className="reveal" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: '1.5rem', maxWidth: '760px' }}>
+        {/* Education */}
+        <div style={{ padding: '18px', background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '10px' }}>
+          <h3 style={{ fontSize: '13px', fontWeight: 700, color: 'var(--bright)', marginBottom: '14px', borderBottom: '1px solid var(--border)', paddingBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            🎓 Education
+          </h3>
+          <ul style={{ paddingLeft: '0', margin: 0, listStyle: 'none', fontSize: '12.5px', color: 'var(--text)', display: 'flex', flexDirection: 'column', gap: '12px', lineHeight: 1.6 }}>
+            <li style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              <span style={{ color: '#38bdf8', fontWeight: 700 }}>Diploma in CST</span>
+              <span style={{ fontSize: '11px', color: 'var(--bright)' }}>Jessore Polytechnic Institute</span>
+              <span style={{ fontSize: '10.5px', color: 'var(--dim)' }}>2023 – 2027 (7th Sem)</span>
+            </li>
+            <li style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              <span style={{ color: '#22c55e', fontWeight: 700 }}>SSC (Vocational)</span>
+              <span style={{ fontSize: '11px', color: 'var(--bright)' }}>Satkhira Govt. Tech. School</span>
+              <span style={{ fontSize: '10.5px', color: 'var(--dim)' }}>2022 | GPA: 4.86</span>
+            </li>
+          </ul>
+        </div>
+
         {/* Certifications */}
         <div style={{ padding: '18px', background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '10px' }}>
           <h3 style={{ fontSize: '13px', fontWeight: 700, color: 'var(--bright)', marginBottom: '14px', borderBottom: '1px solid var(--border)', paddingBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -216,7 +235,7 @@ const AboutPage = () => {
               {[
                 { lang: 'Bengali', level: 'Native', color: '#22c55e' },
                 { lang: 'Arabic', level: 'Quranic', color: '#facc15' },
-                { lang: 'English', level: 'Basic', color: '#38bdf8' },
+                { lang: 'English', level: 'Conversational', color: '#38bdf8' },
               ].map(({ lang, level, color }) => (
                 <span key={lang} style={{ fontSize: '10.5px', padding: '3px 9px', borderRadius: '20px', background: `${color}10`, border: `1px solid ${color}30`, color }}>
                   {lang} <span style={{ opacity: 0.6 }}>({level})</span>
